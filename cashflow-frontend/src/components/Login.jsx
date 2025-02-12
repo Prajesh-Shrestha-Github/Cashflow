@@ -1,18 +1,12 @@
-// src/components/Login.jsx
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
-  const [credentials, setCredentials] = useState({
-    username: '',
-    password: '',
-  });
+  const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [message, setMessage] = useState(null);
 
   const handleChange = (e) => {
-    setCredentials({
-      ...credentials,
-      [e.target.name]: e.target.value,
-    });
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -20,16 +14,12 @@ const Login = () => {
     try {
       const response = await fetch('http://127.0.0.1:8000/api/auth/login/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
       });
 
       const data = await response.json();
-
       if (response.ok) {
-        // Save token in local storage or context as needed.
         localStorage.setItem('token', data.token);
         setMessage("Login successful!");
       } else {
@@ -67,6 +57,12 @@ const Login = () => {
           Login
         </button>
       </form>
+      
+      <div className="mt-4 text-center">
+        <Link to="/register" className="text-blue-500 hover:underline">Don't have an account? Register</Link>
+        <br />
+        <Link to="/forgot-password" className="text-blue-500 hover:underline">Forgot Password?</Link>
+      </div>
     </div>
   );
 };

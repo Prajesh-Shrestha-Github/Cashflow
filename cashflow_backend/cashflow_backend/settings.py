@@ -133,3 +133,13 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (for development only)
+
+# Email Configuration (Use your SMTP settings)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Change if using a different provider
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'cashflownepal@gmail.com'  # Replace with your email
+EMAIL_HOST_PASSWORD = 'pjbu kkec bgix iuzy'  # Use environment variables for security
+
+

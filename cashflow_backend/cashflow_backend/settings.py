@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'cashflow_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cashflow_db',
+        'NAME': 'cashflow',
         'USER': 'cashflow_user',
         'PASSWORD': 'admin',
         'HOST': 'localhost',
@@ -143,3 +143,5 @@ EMAIL_HOST_USER = 'cashflownepal@gmail.com'  # Replace with your email
 EMAIL_HOST_PASSWORD = 'pjbu kkec bgix iuzy'  # Use environment variables for security
 
 
+
+AUTH_USER_MODEL = 'accounts.CustomUser'

@@ -1,10 +1,9 @@
-# accounts/urls.py
 from django.urls import path
-from .views import RegistrationView, LoginView
-from .views import PasswordResetRequestView, PasswordResetConfirmView
+from .views import RegisterView, LoginView, PasswordResetWithSecurityView, GetSecurityQuestionView
+
 urlpatterns = [
-    path('register/', RegistrationView.as_view(), name='register'),
-    path('login/', LoginView.as_view(), name='login'),
-    path('password-reset/', PasswordResetRequestView.as_view(), name='password-reset'),
-    path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
+    path("register/", RegisterView.as_view(), name="register"),
+    path("login/", LoginView.as_view(), name="login"),
+    path("reset-password/", PasswordResetWithSecurityView.as_view(), name="reset-password"),
+    path("get-security-question/", GetSecurityQuestionView.as_view(), name="get-security-question"),
 ]

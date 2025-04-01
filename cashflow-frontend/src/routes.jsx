@@ -1,7 +1,7 @@
 // src/routes.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './components/Login';
-import Register from './components/Register';
+import Login from './components/auth/LoginForm';
+import Register from './components/auth/RegisterForm';
 import ForgotPassword from './components/ForgotPassword';
 
 const AppRoutes = () => {

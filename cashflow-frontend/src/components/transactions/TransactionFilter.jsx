@@ -10,6 +10,7 @@ const TransactionFilter = () => {
     endDate: filters.endDate || '',
     category: filters.category || '',
     type: filters.type || '',
+    search: filters.search || '',
   });
   
   const handleChange = (e) => {
@@ -42,6 +43,7 @@ const TransactionFilter = () => {
       endDate: '',
       category: '',
       type: '',
+      search: ''
     };
     setLocalFilters(resetFilters);
     updateFilters(resetFilters);
@@ -61,6 +63,20 @@ const TransactionFilter = () => {
       </button>
       
       <form id="filter-form" className="hidden mt-4" onSubmit={handleSubmit}>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+            Search
+        </label>
+        <input
+            type="text"
+            name="search"
+            value={localFilters.search}
+            onChange={handleChange}
+            placeholder="Search description..."
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

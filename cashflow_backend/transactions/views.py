@@ -5,6 +5,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Transaction, Category
 from .serializers import TransactionSerializer, CategorySerializer, CSVUploadSerializer
 from .utils import process_csv_file
+from django.db.models import Q
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoint for listing categories"""
@@ -35,6 +36,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
         end_date = self.request.query_params.get('endDate')
         category = self.request.query_params.get('category')
         trans_type = self.request.query_params.get('type')
+        search = self.request.query_params.get('search')
         
         if start_date:
             queryset = queryset.filter(date__gte=start_date)
@@ -44,6 +46,10 @@ class TransactionViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(category=category)
         if trans_type:
             queryset = queryset.filter(category__type=trans_type)
+        if search:
+            queryset = queryset.filter(
+                Q(description__icontains=search) | Q(category__name__icontains=search)
+            )
         
         return queryset
 

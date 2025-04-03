@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import UserDashboard from '../components/dashboard/UserDashboard';
 import { logoutUser } from '../services/auth';
@@ -34,6 +34,17 @@ const DashboardPage = () => {
               <div className="flex-shrink-0 flex items-center">
                 <h1 className="text-xl font-bold text-gray-800">Cashflow</h1>
               </div>
+              <nav className="ml-10">
+                <ul className="flex space-x-4">
+                  <li>
+                    <NavLink to="/dashboard" end className={({ isActive }) => isActive ? "text-indigo-600 font-bold" : "text-gray-700"}>Dashboard</NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/transactions" className={({ isActive }) => isActive ? "text-indigo-600 font-bold" : "text-gray-700"}>Transactions</NavLink>
+                  </li>
+                  {/* Other navigation links */}
+                </ul>
+              </nav>
             </div>
             <div className="flex items-center">
               <span className="text-gray-700 mr-4">Welcome, {user?.first_name || user?.username}</span>

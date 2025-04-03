@@ -10,6 +10,7 @@ import DashboardPage from './pages/DashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import TransactionsPage from './pages/Transactionspage';
 
 function App() {
   return (
@@ -29,6 +30,15 @@ function App() {
                 <DashboardPage />
               </ProtectedRoute>
             } 
+          />
+
+          <Route 
+          path="/transactions" 
+          element={
+            <ProtectedRoute>
+              <TransactionsPage />
+            </ProtectedRoute>
+          } 
           />
           
           <Route 

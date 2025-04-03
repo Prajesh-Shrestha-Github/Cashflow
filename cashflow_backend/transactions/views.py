@@ -28,9 +28,25 @@ class TransactionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
-        """Return transactions for the current user"""
         user = self.request.user
-        return Transaction.objects.filter(user=user).order_by('-date')
+        queryset = Transaction.objects.filter(user=user).order_by('-date')
+        
+        start_date = self.request.query_params.get('startDate')
+        end_date = self.request.query_params.get('endDate')
+        category = self.request.query_params.get('category')
+        trans_type = self.request.query_params.get('type')
+        
+        if start_date:
+            queryset = queryset.filter(date__gte=start_date)
+        if end_date:
+            queryset = queryset.filter(date__lte=end_date)
+        if category:
+            queryset = queryset.filter(category=category)
+        if trans_type:
+            queryset = queryset.filter(category__type=trans_type)
+        
+        return queryset
+
     
     def get_serializer_context(self):
         """Add request to serializer context"""

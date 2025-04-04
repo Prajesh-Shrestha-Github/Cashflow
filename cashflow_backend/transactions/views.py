@@ -1,11 +1,12 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.db.models import Q
 from .models import Transaction, Category
 from .serializers import TransactionSerializer, CategorySerializer, CSVUploadSerializer
+from financial_goals.models import FinancialGoal
 from .utils import process_csv_file
-from django.db.models import Q
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoint for listing categories"""
@@ -27,6 +28,9 @@ class TransactionViewSet(viewsets.ModelViewSet):
     """API endpoint for managing transactions"""
     serializer_class = TransactionSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['description', 'category__name']
+    ordering_fields = ['date', 'amount', 'category__name']
     
     def get_queryset(self):
         user = self.request.user
@@ -52,12 +56,14 @@ class TransactionViewSet(viewsets.ModelViewSet):
             )
         
         return queryset
-
     
     def get_serializer_context(self):
         """Add request to serializer context"""
         context = super().get_serializer_context()
         return context
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
     
     @action(detail=False, methods=['post'], parser_classes=[MultiPartParser, FormParser])
     def import_csv(self, request):
@@ -103,3 +109,24 @@ class TransactionViewSet(viewsets.ModelViewSet):
             'total_expenses': total_expenses,
             'balance': balance
         })
+    
+    @action(detail=False, methods=['get'])
+    def available_goals(self, request):
+        """Return a list of goals that can be linked to transactions"""
+        goals = FinancialGoal.objects.filter(
+            user=request.user, 
+            status='in_progress'
+        )
+        
+        # Format goals for dropdown
+        goal_options = [
+            {
+                'id': goal.id,
+                'title': goal.title,
+                'type': goal.goal_type,
+                'compatible_category_type': 'income' if goal.goal_type in ['savings', 'investment', 'income_increase'] else 'expense'
+            }
+            for goal in goals
+        ]
+        
+        return Response(goal_options)

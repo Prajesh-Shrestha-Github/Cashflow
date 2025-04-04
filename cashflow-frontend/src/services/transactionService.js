@@ -9,14 +9,11 @@ const transactionService = {
   // Get all transactions with optional filters
   async getTransactions(filters = {}) {
     let queryParams = new URLSearchParams();
-    
-    // Add any filters to query params
     Object.keys(filters).forEach(key => {
       if (filters[key]) {
         queryParams.append(key, filters[key]);
       }
     });
-    
     const response = await api.get(`${TRANSACTIONS_PATH}?${queryParams}`);
     return response.data;
   },
@@ -55,9 +52,6 @@ const transactionService = {
   async importCSV(file) {
     const formData = new FormData();
     formData.append('file', file);
-    
-    // For form data, we need to set the content type to multipart/form-data
-    // but axios will automatically set the correct content type when formData is passed
     const response = await api.post(`${TRANSACTIONS_PATH}import_csv/`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -72,8 +66,13 @@ const transactionService = {
     if (type) {
       url += `?type=${type}`;
     }
-    
     const response = await api.get(url);
+    return response.data;
+  },
+  
+  // New: Get available financial goals for linking transactions
+  async getAvailableGoals() {
+    const response = await api.get(`${TRANSACTIONS_PATH}available_goals/`);
     return response.data;
   }
 };

@@ -11,6 +11,7 @@ export const TransactionProvider = ({ children }) => {
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [summary, setSummary] = useState({ total_income: 0, total_expenses: 0, balance: 0 });
+  const [availableGoals, setAvailableGoals] = useState([]); // New state for available financial goals
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
@@ -24,9 +25,7 @@ export const TransactionProvider = ({ children }) => {
   const fetchTransactions = useCallback(async () => {
     try {
       setLoading(true);
-      console.log("Fetching transactions with filters:", filters);
       const data = await transactionService.getTransactions(filters);
-      console.log("API Response Data:", data); // Debugging
       setTransactions(data);
       setError(null);
     } catch (err) {
@@ -37,7 +36,6 @@ export const TransactionProvider = ({ children }) => {
     }
   }, [filters]);
   
-
   // Fetch categories
   const fetchCategories = useCallback(async () => {
     try {
@@ -58,6 +56,16 @@ export const TransactionProvider = ({ children }) => {
     }
   }, []);
 
+  // New: Fetch available financial goals for linking transactions
+  const fetchAvailableGoals = useCallback(async () => {
+    try {
+      const data = await transactionService.getAvailableGoals();
+      setAvailableGoals(data);
+    } catch (err) {
+      console.error('Failed to fetch available goals:', err);
+    }
+  }, []);
+
   // Add a new transaction
   const addTransaction = async (transactionData) => {
     try {
@@ -66,6 +74,7 @@ export const TransactionProvider = ({ children }) => {
       toast.success('Transaction added successfully');
       await fetchTransactions();
       await fetchSummary();
+      await fetchAvailableGoals();
       return true;
     } catch (err) {
       toast.error('Failed to add transaction');
@@ -84,6 +93,7 @@ export const TransactionProvider = ({ children }) => {
       toast.success('Transaction updated successfully');
       await fetchTransactions();
       await fetchSummary();
+      await fetchAvailableGoals();
       return true;
     } catch (err) {
       toast.error('Failed to update transaction');
@@ -102,6 +112,7 @@ export const TransactionProvider = ({ children }) => {
       toast.success('Transaction deleted successfully');
       setTransactions(transactions.filter(t => t.id !== id));
       await fetchSummary();
+      await fetchAvailableGoals();
       return true;
     } catch (err) {
       toast.error('Failed to delete transaction');
@@ -120,6 +131,7 @@ export const TransactionProvider = ({ children }) => {
       toast.success(result.message);
       await fetchTransactions();
       await fetchSummary();
+      await fetchAvailableGoals();
       return true;
     } catch (err) {
       toast.error('Failed to import CSV');
@@ -132,14 +144,9 @@ export const TransactionProvider = ({ children }) => {
 
   // Update filters
   const updateFilters = (newFilters) => {
-    setFilters(prev => {
-      const updatedFilters = { ...prev, ...newFilters };
-      console.log("Updated Filters:", updatedFilters); // Debugging
-      return updatedFilters;
-    });
+    setFilters(prev => ({ ...prev, ...newFilters }));
   };
   
-
   // Load initial data
   useEffect(() => {
     fetchCategories();
@@ -148,12 +155,14 @@ export const TransactionProvider = ({ children }) => {
   useEffect(() => {
     fetchTransactions();
     fetchSummary();
-  }, [fetchTransactions, fetchSummary]);
+    fetchAvailableGoals(); // Fetch available goals on initial load
+  }, [fetchTransactions, fetchSummary, fetchAvailableGoals]);
 
   const value = {
     transactions,
     categories,
     summary,
+    availableGoals, // Expose available goals to consumers
     loading,
     error,
     filters,

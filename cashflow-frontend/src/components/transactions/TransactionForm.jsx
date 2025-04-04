@@ -4,17 +4,18 @@ import { useTransactions } from '../../context/TransactionContext';
 import CategorySelect from './CategorySelect';
 
 const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = () => {} }) => {
-  const { addTransaction, updateTransaction, loading } = useTransactions();
+  const { addTransaction, updateTransaction, loading, availableGoals } = useTransactions();
   
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
     amount: '',
     category: '',
     description: '',
-    is_recurring: false
+    is_recurring: false,
+    financial_goal: ''  // New field for financial goal selection
   });
   
-  // If transaction prop is provided, populate form for editing
+  // Populate form for editing if a transaction prop is provided
   useEffect(() => {
     if (transaction) {
       setFormData({
@@ -22,7 +23,8 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
         amount: transaction.amount,
         category: transaction.category,
         description: transaction.description || '',
-        is_recurring: transaction.is_recurring || false
+        is_recurring: transaction.is_recurring || false,
+        financial_goal: transaction.financial_goal || ''
       });
     }
   }, [transaction]);
@@ -38,16 +40,19 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
   const handleCategoryChange = (categoryId) => {
     setFormData(prev => ({ ...prev, category: categoryId }));
   };
+
+  const handleGoalChange = (e) => {
+    setFormData(prev => ({ ...prev, financial_goal: e.target.value }));
+  };
   
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate form
+    // Validate form: ensure date, amount, category are provided
     if (!formData.date || !formData.amount || !formData.category) {
       return;
     }
     
-    // Create or update transaction
     let success;
     if (transaction) {
       success = await updateTransaction(transaction.id, formData);
@@ -64,7 +69,8 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
           amount: '',
           category: '',
           description: '',
-          is_recurring: false
+          is_recurring: false,
+          financial_goal: ''
         });
       }
     }
@@ -118,6 +124,27 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
           value={formData.category} 
           onChange={handleCategoryChange} 
         />
+      </div>
+      
+      {/* New Financial Goal Dropdown */}
+      <div className="mb-4">
+        <label htmlFor="financial_goal" className="block text-sm font-medium text-gray-700 mb-1">
+          Financial Goal (Optional)
+        </label>
+        <select
+          id="financial_goal"
+          name="financial_goal"
+          value={formData.financial_goal}
+          onChange={handleGoalChange}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">-- Select a Goal --</option>
+          {availableGoals && availableGoals.map(goal => (
+            <option key={goal.id} value={goal.id}>
+              {goal.title} ({goal.type})
+            </option>
+          ))}
+        </select>
       </div>
       
       <div className="mb-4">

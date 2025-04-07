@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import { GoalsProvider } from './context/GoalsContext'; // Added import for GoalsProvider
+import { GoalsProvider } from './context/GoalsContext';
+import { TransactionProvider } from './context/TransactionContext'; // Added import for GoalsProvider
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 // Pages
@@ -17,7 +18,7 @@ import GoalsPage from './pages/GoalsPage';
 function App() {
   return (
     <AuthProvider>
-      <GoalsProvider> {/* Added GoalsProvider to provide goals context */}
+      {/* <GoalsProvider> */}
         <Router>
           <Routes>
             {/* Public Routes */}
@@ -40,18 +41,23 @@ function App() {
               path="/transactions"
               element={
                 <ProtectedRoute>
-                  <TransactionsPage />
+                  <TransactionProvider>
+                    <TransactionsPage />
+                  </TransactionProvider>
                 </ProtectedRoute>
               }
             />
             <Route
-              path="/goals" // Added route for GoalsPage
+              path="/goals"
               element={
                 <ProtectedRoute>
-                  <GoalsPage />
+                  <GoalsProvider>
+                    <GoalsPage />
+                  </GoalsProvider>
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/admin-dashboard"
               element={
@@ -65,7 +71,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
-      </GoalsProvider>
+      {/* </GoalsProvider> */}
     </AuthProvider>
   );
 }

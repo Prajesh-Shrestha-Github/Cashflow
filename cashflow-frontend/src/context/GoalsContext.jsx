@@ -2,30 +2,33 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import goalService from '../services/goalService';
 import { toast } from 'react-hot-toast';
+import { useAuth } from './AuthContext'; // ✅ Get the current authenticated user
 
 const GoalsContext = createContext();
 
 export const useGoals = () => useContext(GoalsContext);
 
 export const GoalsProvider = ({ children }) => {
+  const { user } = useAuth(); // ✅ Access the logged-in user
   const [goals, setGoals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch all goals
+  // ✅ Fetch all goals (only if user exists)
   const fetchGoals = useCallback(async () => {
+    if (!user) return; // prevent fetching before auth
     try {
       setLoading(true);
       const data = await goalService.getGoals();
       setGoals(data);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch goals');
       console.error(err);
+      setError('Failed to fetch goals');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user]);
 
   // Add a new goal
   const addGoal = async (goalData) => {
@@ -84,7 +87,7 @@ export const GoalsProvider = ({ children }) => {
     }
   };
 
-  // Update goal progress (if applicable)
+  // Update goal progress
   const updateProgress = async (id) => {
     try {
       setLoading(true);
@@ -103,7 +106,7 @@ export const GoalsProvider = ({ children }) => {
     }
   };
 
-  // Load initial data
+  // ✅ Only fetch goals if user is authenticated
   useEffect(() => {
     fetchGoals();
   }, [fetchGoals]);

@@ -2,16 +2,18 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import transactionService from '../services/transactionService';
 import { toast } from 'react-hot-toast';
+import { useAuth } from './AuthContext'; // ✅ Added
 
 const TransactionContext = createContext();
 
 export const useTransactions = () => useContext(TransactionContext);
 
 export const TransactionProvider = ({ children }) => {
+  const { user } = useAuth(); // ✅ Use authenticated user
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [summary, setSummary] = useState({ total_income: 0, total_expenses: 0, balance: 0 });
-  const [availableGoals, setAvailableGoals] = useState([]); // New state for available financial goals
+  const [availableGoals, setAvailableGoals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
@@ -21,8 +23,8 @@ export const TransactionProvider = ({ children }) => {
     type: null,
   });
 
-  // Fetch transactions based on filters
   const fetchTransactions = useCallback(async () => {
+    if (!user) return; // ✅ prevent fetch if not authenticated
     try {
       setLoading(true);
       const data = await transactionService.getTransactions(filters);
@@ -34,39 +36,38 @@ export const TransactionProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
-  
-  // Fetch categories
+  }, [filters, user]);
+
   const fetchCategories = useCallback(async () => {
+    if (!user) return; // ✅ prevent fetch if not authenticated
     try {
       const data = await transactionService.getCategories();
       setCategories(data);
     } catch (err) {
       console.error('Failed to fetch categories:', err);
     }
-  }, []);
+  }, [user]);
 
-  // Fetch transaction summary
   const fetchSummary = useCallback(async () => {
+    if (!user) return;
     try {
       const data = await transactionService.getTransactionSummary();
       setSummary(data);
     } catch (err) {
       console.error('Failed to fetch summary:', err);
     }
-  }, []);
+  }, [user]);
 
-  // New: Fetch available financial goals for linking transactions
   const fetchAvailableGoals = useCallback(async () => {
+    if (!user) return;
     try {
       const data = await transactionService.getAvailableGoals();
       setAvailableGoals(data);
     } catch (err) {
       console.error('Failed to fetch available goals:', err);
     }
-  }, []);
+  }, [user]);
 
-  // Add a new transaction
   const addTransaction = async (transactionData) => {
     try {
       setLoading(true);
@@ -85,7 +86,6 @@ export const TransactionProvider = ({ children }) => {
     }
   };
 
-  // Update an existing transaction
   const updateTransaction = async (id, transactionData) => {
     try {
       setLoading(true);
@@ -104,7 +104,6 @@ export const TransactionProvider = ({ children }) => {
     }
   };
 
-  // Delete a transaction
   const deleteTransaction = async (id) => {
     try {
       setLoading(true);
@@ -123,7 +122,6 @@ export const TransactionProvider = ({ children }) => {
     }
   };
 
-  // Import transactions from CSV file
   const importCSV = async (file) => {
     try {
       setLoading(true);
@@ -142,27 +140,25 @@ export const TransactionProvider = ({ children }) => {
     }
   };
 
-  // Update filters
   const updateFilters = (newFilters) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
-  
-  // Load initial data
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
 
+  // Load initial data only if user is available
   useEffect(() => {
-    fetchTransactions();
-    fetchSummary();
-    fetchAvailableGoals(); // Fetch available goals on initial load
-  }, [fetchTransactions, fetchSummary, fetchAvailableGoals]);
+    if (user) {
+      fetchCategories();
+      fetchTransactions();
+      fetchSummary();
+      fetchAvailableGoals();
+    }
+  }, [user, fetchCategories, fetchTransactions, fetchSummary, fetchAvailableGoals]);
 
   const value = {
     transactions,
     categories,
     summary,
-    availableGoals, // Expose available goals to consumers
+    availableGoals,
     loading,
     error,
     filters,

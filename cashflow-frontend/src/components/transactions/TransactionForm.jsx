@@ -12,10 +12,9 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
     category: '',
     description: '',
     is_recurring: false,
-    financial_goal: ''  // New field for financial goal selection
+    financial_goal: ''
   });
   
-  // Populate form for editing if a transaction prop is provided
   useEffect(() => {
     if (transaction) {
       setFormData({
@@ -48,21 +47,24 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate form: ensure date, amount, category are provided
     if (!formData.date || !formData.amount || !formData.category) {
       return;
     }
     
+    const payload = {
+      ...formData,
+      financial_goal: formData.financial_goal === '' ? null : formData.financial_goal,
+    };
+    
     let success;
     if (transaction) {
-      success = await updateTransaction(transaction.id, formData);
+      success = await updateTransaction(transaction.id, payload);
     } else {
-      success = await addTransaction(formData);
+      success = await addTransaction(payload);
     }
     
     if (success) {
       onSuccess();
-      // Reset form if adding new transaction
       if (!transaction) {
         setFormData({
           date: new Date().toISOString().split('T')[0],
@@ -126,7 +128,6 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
         />
       </div>
       
-      {/* New Financial Goal Dropdown */}
       <div className="mb-4">
         <label htmlFor="financial_goal" className="block text-sm font-medium text-gray-700 mb-1">
           Financial Goal (Optional)
@@ -141,7 +142,7 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
           <option value="">-- Select a Goal --</option>
           {availableGoals && availableGoals.map(goal => (
             <option key={goal.id} value={goal.id}>
-              {goal.title} ({goal.type})
+              {goal.title} ({goal.goal_type})
             </option>
           ))}
         </select>

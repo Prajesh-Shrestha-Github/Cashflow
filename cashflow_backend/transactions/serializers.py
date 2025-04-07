@@ -22,9 +22,11 @@ class TransactionSerializer(serializers.ModelSerializer):
         read_only_fields = ['created_at', 'updated_at']
     
     def create(self, validated_data):
-        user = self.context['request'].user
+        # Remove the user from validated_data if it was passed from the view
+        user = validated_data.pop('user', self.context['request'].user)
         transaction = Transaction.objects.create(user=user, **validated_data)
         return transaction
+
 
     def validate(self, data):
         # If a financial goal is provided, ensure it belongs to the user

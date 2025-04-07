@@ -42,6 +42,9 @@ const DashboardPage = () => {
                   <li>
                     <NavLink to="/transactions" className={({ isActive }) => isActive ? "text-indigo-600 font-bold" : "text-gray-700"}>Transactions</NavLink>
                   </li>
+                  <li>
+                    <NavLink to="/goals" className={({ isActive }) => isActive ? "text-indigo-600 font-bold" : "text-gray-700"}>Goals</NavLink>
+                  </li>
                   {/* Other navigation links */}
                 </ul>
               </nav>

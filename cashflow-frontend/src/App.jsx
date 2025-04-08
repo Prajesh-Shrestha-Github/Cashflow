@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import { GoalsProvider } from './context/GoalsContext';
 import { TransactionProvider } from './context/TransactionContext'; // Added import for GoalsProvider
+import { FinancialHealthProvider } from './context/FinancialHealthContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 // Pages
@@ -14,6 +15,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import TransactionsPage from './pages/Transactionspage';
 import GoalsPage from './pages/GoalsPage';
+import FinancialHealthPage from './pages/FinancialHealthPage';
+
 
 function App() {
   return (
@@ -33,7 +36,9 @@ function App() {
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <DashboardPage />
+                  <FinancialHealthProvider>
+                    <DashboardPage />
+                  </FinancialHealthProvider>
                 </ProtectedRoute>
               }
             />
@@ -57,12 +62,23 @@ function App() {
                 </ProtectedRoute>
               }
             />
+           
 
             <Route
               path="/admin-dashboard"
               element={
                 <ProtectedRoute requireAdmin={true}>
                   <AdminDashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/financial-health"
+              element={
+                <ProtectedRoute>
+                  <FinancialHealthProvider>
+                    <FinancialHealthPage />
+                  </FinancialHealthProvider>
                 </ProtectedRoute>
               }
             />

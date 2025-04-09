@@ -10,5 +10,6 @@ urlpatterns = [
     path('api/dashboard/', include('dashboard.urls')),
     path('api/transactions/', include('transactions.urls')),
     path('api/financial/', include('financial_goals.urls')),
+    path('api/recommendations/', include('recommendations.urls')),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

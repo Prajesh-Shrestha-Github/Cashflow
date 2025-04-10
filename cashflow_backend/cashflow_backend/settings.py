@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'transactions',
     'financial_goals',
     'recommendations',
+    'articles',
 ]
 
 MIDDLEWARE = [

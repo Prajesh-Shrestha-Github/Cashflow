@@ -1,5 +1,8 @@
+# recommendations/models.py
+
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 class Recommendation(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -13,3 +16,14 @@ class Recommendation(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+class DailyRequestCounter(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    date = models.DateField(default=timezone.now)
+    count = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('user', 'date')
+        
+    def __str__(self):
+        return f"{self.user.username} - {self.date} - {self.count} requests"

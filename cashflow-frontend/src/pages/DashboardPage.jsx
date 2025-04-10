@@ -81,7 +81,17 @@ const DashboardPage = () => {
                         isActive ? 'text-indigo-600 font-bold' : 'text-gray-700'
                       }
                     >
-                      Financial Health {/* Changed "Transaction Health" to "Financial Health" */}
+                      Financial Health 
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/ai-advisor"
+                      className={({ isActive }) =>
+                        isActive ? 'text-indigo-600 font-bold' : 'text-gray-700'
+                      }
+                    >
+                      AI Advisor
                     </NavLink>
                   </li>
                 </ul>

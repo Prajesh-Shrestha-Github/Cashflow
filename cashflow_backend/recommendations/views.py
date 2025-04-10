@@ -15,8 +15,16 @@ class RecommendationView(APIView):
             query = serializer.validated_data['query']
             sarcasm_level = serializer.validated_data['sarcasm_level']
             
-            # Generate recommendation
             service = AIRecommendationService()
+            # Check if user has any remaining requests today
+            has_requests, remaining = service.check_rate_limit(request.user)
+            if not has_requests:
+                return Response(
+                    {'detail': "You've reached your daily limit of 3 AI recommendations. Please try again tomorrow!"},
+                    status=status.HTTP_429_TOO_MANY_REQUESTS
+                )
+            
+            # Generate recommendation
             response_text = service.generate_recommendation(
                 user=request.user,
                 query=query,
@@ -33,7 +41,8 @@ class RecommendationView(APIView):
             
             return Response({
                 'response': response_text,
-                'id': recommendation.id
+                'id': recommendation.id,
+                'requests_remaining': remaining - 1
             }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

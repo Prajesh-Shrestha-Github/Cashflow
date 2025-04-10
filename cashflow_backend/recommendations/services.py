@@ -7,6 +7,8 @@ from transactions.models import Transaction, Category
 from financial_goals.models import FinancialGoal, FinancialHealth
 from decimal import Decimal
 from django.utils import timezone
+from django.db import transaction
+from .models import DailyRequestCounter
 
 # Load API key from environment variables
 load_dotenv()
@@ -25,6 +27,44 @@ class AIRecommendationService:
             "X-Title": "Cashflow App (Development)",
             "Content-Type": "application/json"
         }
+
+    def check_rate_limit(self, user):
+        """
+        Check if user has exceeded their daily limit of 3 requests
+        Returns (bool, int): (has_remaining_requests, requests_remaining)
+        """
+        today = timezone.now().date()
+        
+        # Get or create the counter for today
+        counter, created = DailyRequestCounter.objects.get_or_create(
+            user=user,
+            date=today,
+            defaults={'count': 0}
+        )
+        
+        # Check if user has reached their limit
+        if counter.count >= 3:
+            return False, 0
+        
+        # Return True with remaining requests
+        return True, 3 - counter.count
+    
+    def increment_request_counter(self, user):
+        """Increment the user's request counter for today"""
+        today = timezone.now().date()
+        
+        with transaction.atomic():
+            counter, created = DailyRequestCounter.objects.get_or_create(
+                user=user,
+                date=today,
+                defaults={'count': 1}
+            )
+            
+            if not created:
+                counter.count += 1
+                counter.save()
+                
+        return counter.count
 
     def get_user_financial_summary(self, user):
         """Get comprehensive financial summary for the user to provide context to the AI"""
@@ -111,6 +151,11 @@ class AIRecommendationService:
 
     def generate_recommendation(self, user, query, sarcasm_level=0):
         """Generate financial recommendation with optional sarcasm"""
+        # Check if user has remaining requests for today
+        has_requests, remaining = self.check_rate_limit(user)
+        if not has_requests:
+            return "You've reached your daily limit of 3 AI recommendations. Please try again tomorrow!"
+            
         try:
             financial_summary = self.get_user_financial_summary(user)
 
@@ -181,6 +226,9 @@ class AIRecommendationService:
                 print(f"API Error: {response.status_code} - {response.text}")
                 return "Sorry, I couldn't generate a recommendation. Please try again."
 
+            # Increment the counter since we got a successful response
+            self.increment_request_counter(user)
+            
             response_data = response.json()
             return response_data["choices"][0]["message"]["content"]
 
@@ -195,7 +243,7 @@ class AIRecommendationService:
                 self.base_url,
                 headers=self.headers,
                 json={
-                    "model": "gemini-2.5-pro-exp-03-25",
+                    "model": "deepseek/deepseek-chat-v3-0324:free",
                     "messages": [
                         {"role": "system", "content": "You are a helpful assistant."},
                         {"role": "user", "content": "Say hello!"}

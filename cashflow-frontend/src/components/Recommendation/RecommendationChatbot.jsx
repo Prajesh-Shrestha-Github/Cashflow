@@ -1,195 +1,230 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FaPaperPlane, FaHistory } from 'react-icons/fa';
-import aiRecommendationService from '../services/aiRecommendationService';
+import React, { useState, useRef, useEffect } from 'react';
+import { FiSend, FiMessageSquare, FiSettings } from 'react-icons/fi';
+import { FaRobot } from 'react-icons/fa';
+import { motion } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import { useAIRecommendation } from '../../context/AIRecommendationContext';
+import { ErrorBoundary } from 'react-error-boundary';
+
+const MarkdownRenderer = ({ content }) => {
+  return (
+    <ErrorBoundary fallback={<p className="text-red-500">Error displaying message</p>}>
+       <div className="text-sm" >
+        <ReactMarkdown 
+            
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
+        >
+            {content}
+        </ReactMarkdown>
+      </div> 
+    </ErrorBoundary>
+  );
+};
 
 const RecommendationChatbot = () => {
+  const { getRecommendation, remainingRequests, loading: contextLoading } = useAIRecommendation();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [sarcasmLevel, setSarcasmLevel] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showHistory, setShowHistory] = useState(false);
-  const [history, setHistory] = useState([]);
+  const [showSettings, setShowSettings] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Fetch chat history on component mount
-  useEffect(() => {
-    fetchHistory();
-  }, []);
-
-  // Scroll to bottom of chat on new messages
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const fetchHistory = async () => {
-    try {
-      const data = await aiRecommendationService.getHistory();
-      setHistory(data);
-    } catch (error) {
-      console.error('Failed to fetch history:', error);
-    }
-  };
-
+  // Scroll to bottom of messages
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
 
     // Add user message to chat
-    const userMessage = { text: input, isUser: true };
-    setMessages((prev) => [...prev, userMessage]);
-    setIsLoading(true);
+    const userMessage = {
+      id: Date.now(),
+      text: input,
+      sender: 'user'
+    };
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setLoading(true);
+    setError('');
 
     try {
-      // Get response from API
-      const response = await aiRecommendationService.askQuestion(input, sarcasmLevel);
+      // Get AI recommendation
+      const response = await getRecommendation(input, sarcasmLevel);
       
-      // Add AI response to chat
-      setMessages((prev) => [...prev, { text: response.response, isUser: false }]);
-      
-      // Reset input and refresh history
-      setInput('');
-      fetchHistory();
-    } catch (error) {
-      setMessages((prev) => [...prev, { 
-        text: "Sorry, I couldn't process your request. Please try again later.", 
-        isUser: false,
-        isError: true
-      }]);
+      if (response) {
+        // Add AI response to chat
+        const aiMessage = {
+          id: Date.now() + 1,
+          text: response.response,
+          sender: 'ai'
+        };
+        setMessages(prev => [...prev, aiMessage]);
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to get recommendation. Please try again.');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const loadHistoryItem = (item) => {
-    setMessages([
-      { text: item.query, isUser: true },
-      { text: item.response, isUser: false }
-    ]);
-    setShowHistory(false);
+  const handleSettingsToggle = () => {
+    setShowSettings(!showSettings);
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 rounded-lg shadow-lg">
+    <div className="flex flex-col h-full bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Header */}
-      <div className="bg-blue-600 text-white p-4 rounded-t-lg flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Financial Advisor AI</h2>
-        <button 
-          onClick={() => setShowHistory(!showHistory)}
-          className="p-2 rounded-full hover:bg-blue-700 transition-colors"
-        >
-          <FaHistory />
-        </button>
+      <div className="flex items-center justify-between p-4 bg-indigo-600 text-white">
+        <div className="flex items-center space-x-2">
+          <FaRobot className="text-xl" />
+          <h2 className="text-lg font-semibold">AI Financial Advisor</h2>
+        </div>
+        <div className="flex items-center">
+          <span className="mr-3 text-sm bg-indigo-500 px-2 py-1 rounded-full">
+            {remainingRequests} requests left today
+          </span>
+          <button 
+            onClick={handleSettingsToggle}
+            className="p-1 rounded-full hover:bg-indigo-500 transition-colors"
+          >
+            <FiSettings />
+          </button>
+        </div>
       </div>
 
-      {/* Chat area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            <p>Ask for financial advice or recommendations</p>
-          </div>
-        ) : (
-          messages.map((msg, index) => (
-            <div 
-              key={index} 
-              className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
-            >
-              <div 
-                className={`max-w-3/4 p-3 rounded-lg ${
-                  msg.isUser 
-                    ? 'bg-blue-600 text-white rounded-br-none' 
-                    : msg.isError 
-                      ? 'bg-red-100 text-red-800 rounded-bl-none'
-                      : 'bg-gray-200 text-gray-800 rounded-bl-none'
-                }`}
-              >
-                <p className="whitespace-pre-wrap">{msg.text}</p>
-              </div>
+      {/* Settings panel */}
+      {showSettings && (
+        <div className="bg-indigo-50 p-4 border-b border-indigo-100">
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">
+              Sarcasm Level: {sarcasmLevel}/5
+            </label>
+            <input 
+              type="range" 
+              min="0" 
+              max="5" 
+              value={sarcasmLevel} 
+              onChange={(e) => setSarcasmLevel(parseInt(e.target.value))}
+              className="w-full h-2 bg-indigo-200 rounded-lg appearance-none cursor-pointer"
+            />
+            <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <span>Professional</span>
+              <span>Mild</span>
+              <span>Moderate</span>
+              <span>High</span>
+              <span>Very Sarcastic</span>
             </div>
-          ))
-        )}
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-gray-200 p-3 rounded-lg rounded-bl-none">
-              <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-              </div>
-            </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* History sidebar (conditional) */}
-      {showHistory && (
-        <div className="absolute right-0 top-16 w-64 h-5/6 bg-white shadow-lg rounded-l-lg overflow-y-auto z-10 border-l border-t border-b border-gray-200">
-          <div className="p-3 bg-gray-100 border-b sticky top-0">
-            <h3 className="font-medium">Chat History</h3>
-          </div>
-          <div className="p-2">
-            {history.length === 0 ? (
-              <p className="text-gray-500 text-sm p-2">No history yet</p>
-            ) : (
-              history.map((item) => (
-                <div 
-                  key={item.id}
-                  onClick={() => loadHistoryItem(item)}
-                  className="p-2 hover:bg-gray-100 cursor-pointer rounded text-sm border-b"
-                >
-                  <p className="font-medium truncate">{item.query}</p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(item.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-              ))
-            )}
           </div>
         </div>
       )}
 
-      {/* Input area */}
-      <div className="border-t p-4">
-        <div className="mb-3">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Sarcasm Level: {sarcasmLevel}
-          </label>
-          <input
-            type="range"
-            min="0"
-            max="5"
-            value={sarcasmLevel}
-            onChange={(e) => setSarcasmLevel(parseInt(e.target.value))}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-          />
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
-            <span>Professional</span>
-            <span>Sarcastic</span>
+      {/* Messages area */}
+      <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-gray-400">
+            <FiMessageSquare className="text-5xl mb-3" />
+            <p className="text-center">Ask for financial advice or recommendations</p>
+            <p className="text-sm mt-2">Examples:</p>
+            <ul className="text-sm mt-1 space-y-1 text-center">
+              <li>"How can I improve my savings rate?"</li>
+              <li>"What should I do about my high food expenses?"</li>
+              <li>"Help me reach my vacation savings goal faster"</li>
+            </ul>
           </div>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="flex space-x-2">
+        ) : (
+          <div className="space-y-4">
+            {messages.map((message) => (
+              <motion.div
+                key={message.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`
+                  max-w-3/4 px-4 py-3 rounded-lg ${
+                    message.sender === 'user' 
+                      ? 'bg-indigo-500 text-white rounded-tr-none' 
+                      : 'bg-white border border-gray-200 shadow-sm rounded-tl-none'
+                  }
+                `}>
+                  {message.sender === 'ai' ? (
+                    <MarkdownRenderer content={message.text} />
+                  ) : (
+                    <p>{message.text}</p>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+            {loading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex justify-start"
+              >
+                <div className="bg-white border border-gray-200 shadow-sm rounded-lg rounded-tl-none p-4 max-w-3/4">
+                  <div className="flex space-x-2">
+                    <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '600ms' }}></div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm"
+              >
+                {error}
+              </motion.div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
+      </div>
+
+      {/* Input area */}
+      <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 bg-white">
+        <div className="flex items-center space-x-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask for financial advice..."
-            className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            disabled={isLoading}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            disabled={loading || remainingRequests === 0}
           />
           <button
             type="submit"
-            className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
-            disabled={isLoading || !input.trim()}
+            className={`p-2 rounded-full ${
+              loading || !input.trim() || remainingRequests === 0
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-indigo-600 text-white hover:bg-indigo-700'
+            }`}
+            disabled={loading || !input.trim() || remainingRequests === 0}
           >
-            <FaPaperPlane />
+            <FiSend className="text-lg" />
           </button>
-        </form>
-      </div>
+        </div>
+        {remainingRequests === 0 && (
+          <p className="mt-2 text-xs text-red-500">
+            You've reached your daily limit of 3 AI recommendations. Please try again tomorrow!
+          </p>
+        )}
+      </form>
     </div>
   );
 };

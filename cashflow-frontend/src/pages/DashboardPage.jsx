@@ -5,6 +5,7 @@ import UserDashboard from '../components/dashboard/UserDashboard';
 import { logoutUser } from '../services/auth';
 import FinancialHealthBar from '../components/financial-health/FinancialHealthBar'; // Adjusted path
 import { useFinancialHealth } from '../context/FinancialHealthContext';
+import Navbar from '../components/common/Navbar';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
@@ -34,7 +35,9 @@ const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Navigation Bar */}
+      <Navbar />
       <nav className="bg-white shadow-sm">
+      
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">

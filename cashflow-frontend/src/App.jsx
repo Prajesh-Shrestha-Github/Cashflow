@@ -12,13 +12,21 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
-import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-import TransactionsPage from './pages/Transactionspage';
+import TransactionsPage from './pages/TransactionsPage';
 import GoalsPage from './pages/GoalsPage';
 import FinancialHealthPage from './pages/FinancialHealthPage';
 import AIAdvisorPage from './pages/AIAdvisorPage';
+
+// New Article Pages
+import ArticlesPage from './pages/ArticlesPage';
+import ArticleDetailPage from './pages/ArticleDetailPage';
+import BookmarksPage from './pages/BookmarksPage';
+import ArticlesManagementPage from './pages/admin/ArticlesManagementPage';
+import CreateArticlePage from './pages/admin/CreateArticlePage';
+import EditArticlePage from './pages/admin/EditArticlePage';
 
 function App() {
   return (
@@ -32,6 +40,10 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          
+          {/* Article Routes */}
+          <Route path="/articles" element={<ArticlesPage />} />
+          <Route path="/articles/:slug" element={<ArticleDetailPage />} />
           
           {/* Protected Routes */}
           <Route
@@ -75,10 +87,10 @@ function App() {
             }
           />
           <Route
-            path="/admin-dashboard"
+            path="/bookmarks"
             element={
-              <ProtectedRoute requireAdmin={true}>
-                <AdminDashboardPage />
+              <ProtectedRoute>
+                <BookmarksPage />
               </ProtectedRoute>
             }
           />
@@ -91,6 +103,40 @@ function App() {
                 </FinancialHealthProvider>
               </ProtectedRoute>
             }
+          />
+          
+          {/* Admin Routes */}
+          <Route
+            path="/admin-dashboard"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path="/admin/articles" 
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <ArticlesManagementPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/articles/new" 
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <CreateArticlePage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/articles/edit/:slug" 
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <EditArticlePage />
+              </ProtectedRoute>
+            } 
           />
           
           {/* Catch-all Route */}

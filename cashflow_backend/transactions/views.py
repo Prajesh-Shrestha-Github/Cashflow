@@ -5,7 +5,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.db.models import Q
 from .models import Transaction, Category
 from .serializers import TransactionSerializer, CategorySerializer, CSVUploadSerializer
-from financial_goals.models import FinancialGoal
+from financial_goals_and_health.models import FinancialGoal
 from .utils import process_csv_file
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):

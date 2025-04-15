@@ -1,4 +1,4 @@
-# financial_goals/admin.py
+# financial_goals_and_health/admin.py
 from django.contrib import admin
 from .models import FinancialGoal, FinancialHealth
 

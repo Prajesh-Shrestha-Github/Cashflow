@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Transaction, Category
-from financial_goals.models import FinancialGoal
+from financial_goals_and_health.models import FinancialGoal
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'accounts',
     'dashboard',
     'transactions',
-    'financial_goals',
+    'financial_goals_and_health',
     'recommendations',
     'articles',
 ]

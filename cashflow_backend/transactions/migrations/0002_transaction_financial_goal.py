@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('financial_goals', '0002_alter_financialgoal_current_amount_and_more'),
+        ('financial_goals_and_health', '0002_alter_financialgoal_current_amount_and_more'),
         ('transactions', '0001_initial'),
     ]
 
@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='transaction',
             name='financial_goal',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='transactions', to='financial_goals.financialgoal'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='transactions', to='financial_goals_and_health.financialgoal'),
         ),
     ]

@@ -31,7 +31,7 @@ class Transaction(models.Model):
     description = models.TextField(blank=True, null=True)
     is_recurring = models.BooleanField(default=False)
     # Add this new field to link transactions to financial goals
-    financial_goal = models.ForeignKey('financial_goals.FinancialGoal', on_delete=models.SET_NULL, 
+    financial_goal = models.ForeignKey('financial_goals_and_health.FinancialGoal', on_delete=models.SET_NULL, 
                                       null=True, blank=True, related_name='transactions')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from django.conf import settings
 from django.db.models import Sum
 from transactions.models import Transaction, Category
-from financial_goals.models import FinancialGoal, FinancialHealth
+from financial_goals_and_health.models import FinancialGoal, FinancialHealth
 from decimal import Decimal
 from django.utils import timezone
 from django.db import transaction

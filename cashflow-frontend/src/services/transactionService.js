@@ -17,37 +17,55 @@ const transactionService = {
     const response = await api.get(`${TRANSACTIONS_PATH}?${queryParams}`);
     return response.data;
   },
-  
+
   // Get transaction by ID
   async getTransaction(id) {
     const response = await api.get(`${TRANSACTIONS_PATH}${id}/`);
     return response.data;
   },
-  
-  // Create a new transaction
+
+  // Create a new transaction (with recurring fields)
   async createTransaction(transactionData) {
-    const response = await api.post(TRANSACTIONS_PATH, transactionData);
+    const response = await api.post(TRANSACTIONS_PATH, {
+      ...transactionData,
+      frequency: transactionData.is_recurring ? transactionData.frequency : null,
+      next_due_date: transactionData.is_recurring
+        ? (transactionData.next_due_date || transactionData.date)
+        : null,
+      send_email_reminder: transactionData.is_recurring
+        ? transactionData.send_email_reminder
+        : false
+    });
     return response.data;
   },
-  
-  // Update an existing transaction
+
+  // Update an existing transaction (with recurring fields)
   async updateTransaction(id, transactionData) {
-    const response = await api.put(`${TRANSACTIONS_PATH}${id}/`, transactionData);
+    const response = await api.put(`${TRANSACTIONS_PATH}${id}/`, {
+      ...transactionData,
+      frequency: transactionData.is_recurring ? transactionData.frequency : null,
+      next_due_date: transactionData.is_recurring
+        ? (transactionData.next_due_date || transactionData.date)
+        : null,
+      send_email_reminder: transactionData.is_recurring
+        ? transactionData.send_email_reminder
+        : false
+    });
     return response.data;
   },
-  
+
   // Delete a transaction
   async deleteTransaction(id) {
     const response = await api.delete(`${TRANSACTIONS_PATH}${id}/`);
     return response.data;
   },
-  
+
   // Get transaction summary
   async getTransactionSummary() {
     const response = await api.get(`${TRANSACTIONS_PATH}summary/`);
     return response.data;
   },
-  
+
   // Import transactions from CSV
   async importCSV(file) {
     const formData = new FormData();
@@ -59,7 +77,7 @@ const transactionService = {
     });
     return response.data;
   },
-  
+
   // Get all categories
   async getCategories(type = null) {
     let url = CATEGORIES_PATH;
@@ -69,8 +87,8 @@ const transactionService = {
     const response = await api.get(url);
     return response.data;
   },
-  
-  // New: Get available financial goals for linking transactions
+
+  // Get available financial goals for linking transactions
   async getAvailableGoals() {
     const response = await api.get(`${TRANSACTIONS_PATH}available_goals/`);
     return response.data;

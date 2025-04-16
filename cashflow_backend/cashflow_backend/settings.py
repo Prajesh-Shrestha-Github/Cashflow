@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'financial_goals_and_health',
     'recommendations',
     'articles',
+    'reminders'
 ]
 
 MIDDLEWARE = [

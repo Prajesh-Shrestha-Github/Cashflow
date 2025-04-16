@@ -4,7 +4,7 @@ import { useTransactions } from '../../context/TransactionContext';
 import CategorySelect from './CategorySelect';
 
 const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = () => {} }) => {
-  const { addTransaction, updateTransaction, loading, availableGoals } = useTransactions();
+  const { addTransaction, updateTransaction, loading, availableGoals, categories } = useTransactions();
   
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
@@ -12,8 +12,15 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
     category: '',
     description: '',
     is_recurring: false,
-    financial_goal: ''
+    financial_goal: '',
+    // New fields for recurring transactions
+    frequency: '',
+    next_due_date: '',
+    send_email_reminder: false
   });
+  
+  // Determine if the selected category is an expense
+  const [isExpenseCategory, setIsExpenseCategory] = useState(false);
   
   useEffect(() => {
     if (transaction) {
@@ -23,10 +30,23 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
         category: transaction.category,
         description: transaction.description || '',
         is_recurring: transaction.is_recurring || false,
-        financial_goal: transaction.financial_goal || ''
+        financial_goal: transaction.financial_goal || '',
+        frequency: transaction.frequency || '',
+        next_due_date: transaction.next_due_date || '',
+        send_email_reminder: transaction.send_email_reminder || false
       });
     }
   }, [transaction]);
+  
+  // Check if selected category is an expense type
+  useEffect(() => {
+    if (formData.category && categories.length > 0) {
+      const selectedCategory = categories.find(cat => cat.id === parseInt(formData.category));
+      setIsExpenseCategory(selectedCategory && selectedCategory.type === 'expense');
+    } else {
+      setIsExpenseCategory(false);
+    }
+  }, [formData.category, categories]);
   
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -54,6 +74,12 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
     const payload = {
       ...formData,
       financial_goal: formData.financial_goal === '' ? null : formData.financial_goal,
+      // Only include recurring fields if it's a recurring transaction and an expense
+      frequency: formData.is_recurring && isExpenseCategory ? formData.frequency : null,
+      next_due_date: formData.is_recurring && isExpenseCategory ? 
+        (formData.next_due_date || formData.date) : null,
+      send_email_reminder: formData.is_recurring && isExpenseCategory ? 
+        formData.send_email_reminder : false
     };
     
     let success;
@@ -72,7 +98,10 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
           category: '',
           description: '',
           is_recurring: false,
-          financial_goal: ''
+          financial_goal: '',
+          frequency: '',
+          next_due_date: '',
+          send_email_reminder: false
         });
       }
     }
@@ -175,6 +204,64 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
           <span className="ml-2 text-sm text-gray-700">Recurring Transaction</span>
         </label>
       </div>
+      
+      {/* Show recurring options only if it's a recurring transaction and an expense category */}
+      {formData.is_recurring && isExpenseCategory && (
+        <div className="mb-6 p-4 bg-gray-50 rounded-md border border-gray-200">
+          <h3 className="font-medium text-gray-700 mb-3">Recurring Options</h3>
+          
+          <div className="mb-4">
+            <label htmlFor="frequency" className="block text-sm font-medium text-gray-700 mb-1">
+              Frequency
+            </label>
+            <select
+              id="frequency"
+              name="frequency"
+              value={formData.frequency}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required={formData.is_recurring}
+            >
+              <option value="">-- Select Frequency --</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+          
+          <div className="mb-4">
+            <label htmlFor="next_due_date" className="block text-sm font-medium text-gray-700 mb-1">
+              Next Due Date (Optional)
+            </label>
+            <input
+              type="date"
+              id="next_due_date"
+              name="next_due_date"
+              value={formData.next_due_date}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <p className="text-xs text-gray-500 mt-1">If not set, the transaction date will be used</p>
+          </div>
+          
+          <div className="mb-2">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                name="send_email_reminder"
+                checked={formData.send_email_reminder}
+                onChange={handleChange}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <span className="ml-2 text-sm text-gray-700">Send email reminders</span>
+            </label>
+            <p className="text-xs text-gray-500 mt-1 ml-6">
+              You'll receive email reminders when this expense is due
+            </p>
+          </div>
+        </div>
+      )}
       
       <div className="flex justify-end space-x-3">
         <button

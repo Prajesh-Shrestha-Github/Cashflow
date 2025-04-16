@@ -6,10 +6,13 @@ import { logoutUser } from '../services/auth';
 import FinancialHealthBar from '../components/financial-health/FinancialHealthBar'; // Adjusted path
 import { useFinancialHealth } from '../context/FinancialHealthContext';
 import Navbar from '../components/common/Navbar';
+import { useTransactions } from '../context/TransactionContext';
+import RecurringTransactions from '../components/dashboard/RecurringTransactions';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
   const { currentHealth, fetchCurrentHealth } = useFinancialHealth();
+  const { summary, loading } = useTransactions();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -129,7 +132,10 @@ const DashboardPage = () => {
               />
             </div>
           )}
-
+          <div className="lg:col-span-1">
+            <RecurringTransactions />
+            {/* Other sidebar widgets */}
+          </div>
           {/* User Dashboard */}
           <div className="bg-white p-4 rounded-lg shadow-md col-span-1 md:col-span-2 lg:col-span-3">
             <h2 className="text-lg font-semibold mb-2">User Overview</h2>

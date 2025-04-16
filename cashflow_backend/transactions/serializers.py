@@ -11,13 +11,14 @@ class TransactionSerializer(serializers.ModelSerializer):
     category_name = serializers.ReadOnlyField(source='category.name')
     category_type = serializers.ReadOnlyField(source='category.type')
     goal_title = serializers.ReadOnlyField(source='financial_goal.title', default=None)
-    
+    send_email_reminder = serializers.BooleanField(required=False, default=False)
+    frequency = serializers.ChoiceField(choices=Transaction.FREQUENCY_CHOICES, required=False, allow_null=True)
     class Meta:
         model = Transaction
         fields = [
             'id', 'date', 'amount', 'category', 'category_name', 
-            'category_type', 'description', 'is_recurring', 
-            'financial_goal', 'goal_title', 'created_at', 'updated_at'
+            'category_type', 'description', 'is_recurring', 'frequency', 'next_due_date', 
+            'send_email_reminder','financial_goal', 'goal_title', 'created_at', 'updated_at'
         ]
         read_only_fields = ['created_at', 'updated_at']
     

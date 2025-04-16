@@ -6,6 +6,7 @@ import { FinancialHealthProvider } from './context/FinancialHealthContext';
 import { AIRecommendationProvider } from './context/AIRecommendationContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
+import { ReminderProvider } from './context/ReminderContext';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -50,12 +51,17 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <FinancialHealthProvider>
-                  <DashboardPage />
-                </FinancialHealthProvider>
+                <ReminderProvider>
+                  <TransactionProvider>
+                    <FinancialHealthProvider>
+                      <DashboardPage />
+                    </FinancialHealthProvider>
+                  </TransactionProvider>
+                </ReminderProvider>
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/transactions"
             element={

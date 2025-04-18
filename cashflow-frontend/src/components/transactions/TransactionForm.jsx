@@ -21,6 +21,7 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
   
   // Determine if the selected category is an expense
   const [isExpenseCategory, setIsExpenseCategory] = useState(false);
+  const [isIncomeCategory, setIsIncomeCategory] = useState(false);
   
   useEffect(() => {
     if (transaction) {
@@ -38,13 +39,34 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
     }
   }, [transaction]);
   
-  // Check if selected category is an expense type
+  // Check if selected category is an expense or income type
   useEffect(() => {
     if (formData.category && categories.length > 0) {
       const selectedCategory = categories.find(cat => cat.id === parseInt(formData.category));
-      setIsExpenseCategory(selectedCategory && selectedCategory.type === 'expense');
+      const isExpense = selectedCategory && selectedCategory.type === 'expense';
+      const isIncome = selectedCategory && selectedCategory.type === 'income';
+      
+      setIsExpenseCategory(isExpense);
+      setIsIncomeCategory(isIncome);
+      
+      // Reset financial goal if switching to expense category
+      if (isExpense && formData.financial_goal) {
+        setFormData(prev => ({ ...prev, financial_goal: '' }));
+      }
+      
+      // Reset recurring fields if switching to income category
+      if (isIncome && formData.is_recurring) {
+        setFormData(prev => ({ 
+          ...prev, 
+          is_recurring: false,
+          frequency: '',
+          next_due_date: '',
+          send_email_reminder: false
+        }));
+      }
     } else {
       setIsExpenseCategory(false);
+      setIsIncomeCategory(false);
     }
   }, [formData.category, categories]);
   
@@ -73,8 +95,10 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
     
     const payload = {
       ...formData,
-      financial_goal: formData.financial_goal === '' ? null : formData.financial_goal,
+      // Only include financial_goal if it's an income transaction
+      financial_goal: isIncomeCategory && formData.financial_goal ? formData.financial_goal : null,
       // Only include recurring fields if it's a recurring transaction and an expense
+      is_recurring: isExpenseCategory ? formData.is_recurring : false,
       frequency: formData.is_recurring && isExpenseCategory ? formData.frequency : null,
       next_due_date: formData.is_recurring && isExpenseCategory ? 
         (formData.next_due_date || formData.date) : null,
@@ -155,27 +179,42 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
           value={formData.category} 
           onChange={handleCategoryChange} 
         />
+        {!formData.category && (
+          <p className="text-xs text-gray-500 mt-1">
+            Select a category to see available options
+          </p>
+        )}
+        {formData.category && (
+          <p className="text-xs text-gray-500 mt-1">
+            {isIncomeCategory ? 'Income categories can be linked to financial goals' : 
+             isExpenseCategory ? 'Expense categories can be set as recurring' : ''}
+          </p>
+        )}
       </div>
       
-      <div className="mb-4">
-        <label htmlFor="financial_goal" className="block text-sm font-medium text-gray-700 mb-1">
-          Financial Goal (Optional)
-        </label>
-        <select
-          id="financial_goal"
-          name="financial_goal"
-          value={formData.financial_goal}
-          onChange={handleGoalChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">-- Select a Goal --</option>
-          {availableGoals && availableGoals.map(goal => (
-            <option key={goal.id} value={goal.id}>
-              {goal.title} ({goal.goal_type})
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Only show financial goal selection for income categories */}
+      {isIncomeCategory && (
+        <div className="mb-4">
+          <label htmlFor="financial_goal" className="block text-sm font-medium text-gray-700 mb-1">
+            Financial Goal (Optional)
+          </label>
+          <select
+            id="financial_goal"
+            name="financial_goal"
+            value={formData.financial_goal}
+            onChange={handleGoalChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">-- Select a Goal --</option>
+            {availableGoals && availableGoals.map(goal => (
+              <option key={goal.id} value={goal.id}>
+                {goal.title} ({goal.goal_type})
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-gray-500 mt-1">Link this income to a financial goal</p>
+        </div>
+      )}
       
       <div className="mb-4">
         <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
@@ -192,18 +231,24 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
         />
       </div>
       
-      <div className="mb-6">
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            name="is_recurring"
-            checked={formData.is_recurring}
-            onChange={handleChange}
-            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-          />
-          <span className="ml-2 text-sm text-gray-700">Recurring Transaction</span>
-        </label>
-      </div>
+      {/* Only show recurring option for expense categories */}
+      {isExpenseCategory && (
+        <div className="mb-6">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              name="is_recurring"
+              checked={formData.is_recurring}
+              onChange={handleChange}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span className="ml-2 text-sm text-gray-700">Recurring Transaction</span>
+          </label>
+          <p className="text-xs text-gray-500 mt-1 ml-6">
+            Set up recurring payments for bills, subscriptions, etc.
+          </p>
+        </div>
+      )}
       
       {/* Show recurring options only if it's a recurring transaction and an expense category */}
       {formData.is_recurring && isExpenseCategory && (

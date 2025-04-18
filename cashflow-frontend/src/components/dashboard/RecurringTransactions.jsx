@@ -15,9 +15,17 @@ const RecurringTransactions = () => {
       try {
         setLoading(true);
         const data = await reminderService.getReminders();
-        setReminders(data);
+        
+        // Filter to only include upcoming expenses (days_remaining > 0 or exactly due today)
+        const upcomingReminders = data.filter(reminder => reminder.days_remaining >= 0);
+        
+        // Sort by days remaining (soonest first)
+        upcomingReminders.sort((a, b) => a.days_remaining - b.days_remaining);
+        
+        setReminders(upcomingReminders);
         setLoading(false);
       } catch (err) {
+        console.error('Error fetching reminders:', err);
         setError('Failed to fetch recurring expenses');
         setLoading(false);
       }
@@ -37,16 +45,15 @@ const RecurringTransactions = () => {
 
   // Helper function to get status color based on days remaining
   const getStatusColor = (daysRemaining) => {
-    if (daysRemaining <= 0) return 'text-red-600';
-    if (daysRemaining <= 3) return 'text-orange-500';
-    if (daysRemaining <= 7) return 'text-blue-500';
-    return 'text-green-500';
+    if (daysRemaining === 0) return 'text-orange-600'; // Due today
+    if (daysRemaining <= 3) return 'text-orange-500';  // Due soon
+    if (daysRemaining <= 7) return 'text-blue-500';    // Coming up
+    return 'text-green-500';                           // Further away
   };
 
   // Helper function to get status text
   const getStatusText = (daysRemaining) => {
     if (daysRemaining === 0) return 'Due today';
-    if (daysRemaining < 0) return `Overdue by ${Math.abs(daysRemaining)} day${Math.abs(daysRemaining) !== 1 ? 's' : ''}`;
     return `${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} remaining`;
   };
 
@@ -58,7 +65,7 @@ const RecurringTransactions = () => {
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <p>Loading recurring expenses...</p>
+        <p>Loading upcoming expenses...</p>
       </div>
     </div>
   );
@@ -79,7 +86,7 @@ const RecurringTransactions = () => {
         <svg className="h-12 w-12 mx-auto mb-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
-        <p className="font-medium">No recurring expenses</p>
+        <p className="font-medium">No upcoming expenses</p>
         <p className="text-sm mt-1">Add recurring expenses to see them here</p>
       </div>
     </div>

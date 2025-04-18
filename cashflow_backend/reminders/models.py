@@ -31,7 +31,8 @@ class RecurringTransactionReminder(models.Model):
         user = self.transaction.user
         days = self.days_remaining()
         
-        if days is not None and days <= 3:  # Send reminder when 3 or fewer days remain
+        # Only send reminders for upcoming transactions (0-3 days), not past due ones
+        if days is not None and 0 <= days <= 3:
             subject = f"Reminder: Upcoming expense - {self.transaction.description}"
             message = f"""
             Hello {user.username},
@@ -41,7 +42,7 @@ class RecurringTransactionReminder(models.Model):
             Description: {self.transaction.description}
             Amount: ${self.transaction.amount}
             Due date: {self.transaction.next_due_date}
-            Days remaining: {days}
+            {"Due today!" if days == 0 else f"Days remaining: {days}"}
             
             Thanks for using Cashflow!
             """

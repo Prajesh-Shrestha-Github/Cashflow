@@ -12,9 +12,16 @@ from datetime import timedelta, datetime
 from decimal import Decimal
 import calendar
 from django.db.models.functions import ExtractWeekDay, ExtractHour, TruncDay, TruncWeek, TruncMonth
+from django.contrib.auth import get_user_model
+from django.db.models.functions import TruncDate, TruncMonth, TruncDay
+from django.core.management import call_command
+from io import StringIO
+import sys
 
 # Import transaction model
 from transactions.models import Transaction
+
+User = get_user_model()
 
 class DashboardView(APIView):
     def get(self, request):
@@ -313,38 +320,196 @@ class DashboardView(APIView):
 class AdminDashboardView(APIView):
     def get(self, request):
         """
-        Admin dashboard with overall platform statistics
+        Admin dashboard with overall platform statistics, user data, and transactions.
         """
         if not request.user.is_admin and not request.user.is_staff:
             return Response({'error': 'You do not have permission to access the admin dashboard'}, 
                            status=status.HTTP_403_FORBIDDEN)
         
-        # Dummy admin stats
-        user_count = random.randint(50, 200)
-        transaction_count = user_count * random.randint(10, 50)
-        total_platform_balance = random.randint(50000, 200000)
+        # Current date and past dates for historical data
+        today = timezone.now().date()
+        last_month = today - timedelta(days=30)
+        last_year = today - timedelta(days=365)
+        
+        # Get actual user data
+        all_users = User.objects.all()
+        user_count = all_users.count()
+        active_users = all_users.filter(last_login__gte=last_month).count()
+        new_users_this_month = all_users.filter(date_joined__gte=last_month).count()
+        
+        # Get user growth over time (last 6 months)
+        months = []
+        month_data = []
+        
+        for i in range(5, -1, -1):
+            month_date = today - timedelta(days=30 * i)
+            month_name = month_date.strftime('%b')  # Get abbreviated month name
+            months.append(month_name)
+            
+            # Count users who joined by this month
+            month_users = all_users.filter(date_joined__lte=month_date).count()
+            month_data.append(month_users)
+        
+        # Get transaction data
+        all_transactions = Transaction.objects.select_related('category')
+        transaction_count = all_transactions.count()
+        
+        # Calculate platform totals
+        income_sum = all_transactions.filter(category__type='income').aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+        expense_sum = all_transactions.filter(category__type='expense').aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+        total_platform_balance = income_sum - expense_sum
+        
+        # Calculate average transaction amount
+        average_transaction = Decimal('0.00')
+        if transaction_count > 0:
+            total_amount = all_transactions.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+            average_transaction = total_amount / transaction_count
+        
+        # Get monthly transaction volume for the past 6 months
+        transaction_months = []
+        transaction_volume = []
+        
+        for i in range(5, -1, -1):
+            month_start = today.replace(day=1) - timedelta(days=30 * i)
+            if i > 0:
+                month_end = today.replace(day=1) - timedelta(days=30 * (i-1) - 1)
+            else:
+                month_end = today
+            
+            month_name = month_start.strftime('%b')
+            transaction_months.append(month_name)
+            
+            # Count transactions in this month
+            month_transactions = all_transactions.filter(
+                date__gte=month_start,
+                date__lte=month_end
+            ).count()
+            
+            transaction_volume.append(month_transactions)
+        
+        # Get category distribution
+        category_distribution = all_transactions.filter(
+            category__type='expense'
+        ).values('category__name').annotate(
+            total=Sum('amount')
+        ).order_by('-total')[:5]
+        
+        category_names = [item['category__name'] for item in category_distribution]
+        category_amounts = [float(item['total']) for item in category_distribution]
+        
+        # User list with basic info
+        users_list = [
+            {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'name': f"{getattr(user, 'first_name', '')} {getattr(user, 'last_name', '')}".strip(),
+                'date_joined': user.date_joined.strftime('%Y-%m-%d'),
+                'last_login': user.last_login.strftime('%Y-%m-%d %H:%M') if user.last_login else 'Never',
+                'is_active': user.is_active,
+                'is_admin': getattr(user, 'is_admin', False) or user.is_staff,
+                'transaction_count': Transaction.objects.filter(user=user).count()
+            } for user in all_users
+        ]
         
         response_data = {
             'user_stats': {
                 'total_users': user_count,
-                'active_users': int(user_count * 0.8),
-                'new_users_this_month': int(user_count * 0.1)
+                'active_users': active_users,
+                'new_users_this_month': new_users_this_month
             },
             'transaction_stats': {
                 'total_transactions': transaction_count,
-                'total_platform_balance': total_platform_balance,
-                'average_transaction': round(total_platform_balance / transaction_count, 2)
+                'total_platform_balance': float(total_platform_balance),
+                'average_transaction': float(average_transaction)
             },
             'charts': {
                 'user_growth': {
-                    'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    'data': [random.randint(10, 30) for _ in range(6)]
+                    'labels': months,
+                    'data': month_data
                 },
                 'transaction_volume': {
-                    'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    'data': [random.randint(500, 2000) for _ in range(6)]
+                    'labels': transaction_months,
+                    'data': transaction_volume
+                },
+                'category_distribution': {
+                    'labels': category_names,
+                    'data': category_amounts
                 }
-            }
+            },
+            'users': users_list
         }
         
         return Response(response_data, status=status.HTTP_200_OK)
+    
+    def delete(self, request):
+        """
+        Delete a user and all their associated data.
+        """
+        if not request.user.is_admin and not request.user.is_staff:
+            return Response({'error': 'You do not have permission to delete users'}, 
+                           status=status.HTTP_403_FORBIDDEN)
+        
+        user_id = request.data.get('user_id')
+        if not user_id:
+            return Response({'error': 'User ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = User.objects.get(id=user_id)
+            # Cannot delete yourself
+            if user.id == request.user.id:
+                return Response({'error': 'You cannot delete your own account'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Delete user
+            username = user.username
+            user.delete()
+            return Response({'message': f'User {username} has been deleted successfully'}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f'Error deleting user: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class AdminActionsView(APIView):
+    """
+    API view for admin actions like sending reminders.
+    """
+    def post(self, request):
+        """
+        Execute admin actions based on the action parameter.
+        """
+        if not request.user.is_admin and not request.user.is_staff:
+            return Response({'error': 'You do not have permission to perform admin actions'}, 
+                          status=status.HTTP_403_FORBIDDEN)
+        
+        action = request.data.get('action')
+        
+        if action == 'send_reminders':
+            try:
+                # Use Django's call_command instead of subprocess
+                # Capture the output by redirecting stdout
+                out = StringIO()
+                sys.stdout = out
+                
+                # Call the management command directly
+                call_command('send_reminders')
+                
+                # Reset stdout and get the output
+                sys.stdout = sys.__stdout__
+                output = out.getvalue()
+                
+                return Response({
+                    'success': True,
+                    'message': 'Reminders sent successfully',
+                    'details': output
+                }, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({
+                    'success': False,
+                    'message': 'Error sending reminders',
+                    'details': str(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response({
+                'success': False,
+                'message': 'Invalid action'
+            }, status=status.HTTP_400_BAD_REQUEST)

@@ -34,45 +34,32 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      {/* Financial Health Summary */}
-      {currentHealth && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">Financial Health</h2>
-            <div className="mt-2 md:mt-0">
-              <span 
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  currentHealth.score >= 80
-                    ? 'bg-green-100 text-green-800'
-                    : currentHealth.score >= 60
-                    ? 'bg-blue-100 text-blue-800'
-                    : currentHealth.score >= 40
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-red-100 text-red-800'
-                }`}
-              >
-                Score: {currentHealth.score}/100
-              </span>
-            </div>
-          </div>
-          
-          <FinancialHealthBar 
-            healthStatus={currentHealth.health_status} 
-            savingsRate={currentHealth.savings_rate} 
-          />
-          
-          <p className="mt-4 text-gray-600">
-            {currentHealth.message || 'Maintain your financial habits to improve your score.'}
-          </p>
-        </div>
-      )}
-
-      {/* Main Dashboard Content */}
+      {/* Main Dashboard Content - 2-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left column - Charts and data visualization (2/3 width) */}
         <div className="lg:col-span-2">
           <UserDashboard />
         </div>
-        <div className="lg:col-span-1">
+        
+        {/* Right column - Financial Health and Recurring Transactions (1/3 width) */}
+        <div className="lg:col-span-1 space-y-6">
+          {/* Financial Health Summary */}
+          {currentHealth && (
+            <div className="bg-white rounded-lg shadow p-4">
+    
+              
+              <FinancialHealthBar 
+                healthStatus={currentHealth.health_status} 
+                savingsRate={currentHealth.savings_rate} 
+              />
+              
+              <p className="mt-3 text-sm text-gray-600">
+                {currentHealth.message || 'Maintain your financial habits to improve your score.'}
+              </p>
+            </div>
+          )}
+
+          {/* Recurring Transactions */}
           <RecurringTransactions />
         </div>
       </div>

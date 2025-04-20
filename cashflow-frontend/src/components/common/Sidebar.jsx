@@ -14,14 +14,16 @@ import {
   FaSignOutAlt,
   FaUserShield,
   FaBars,
-  FaTimes
+  FaTimes,
+  FaEdit
 } from 'react-icons/fa';
 
 const Sidebar = () => {
-  const { user, isAdmin, logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isAdmin = user?.is_admin;
 
   // Automatically collapse sidebar on small screens
   useEffect(() => {
@@ -48,8 +50,8 @@ const Sidebar = () => {
     }
   };
 
-  // Menu items with icons
-  const menuItems = [
+  // Menu items with icons for regular users
+  const regularUserMenuItems = [
     { path: '/dashboard', label: 'Dashboard', icon: <FaHome className="w-5 h-5" /> },
     { path: '/transactions', label: 'Transactions', icon: <FaExchangeAlt className="w-5 h-5" /> },
     { path: '/goals', label: 'Goals', icon: <FaFlag className="w-5 h-5" /> },
@@ -59,10 +61,15 @@ const Sidebar = () => {
     { path: '/bookmarks', label: 'Bookmarks', icon: <FaBookmark className="w-5 h-5" /> },
   ];
 
-  // Admin menu items
+  // Menu items for admin users
   const adminMenuItems = [
     { path: '/admin-dashboard', label: 'Admin Dashboard', icon: <FaUserShield className="w-5 h-5" /> },
+    { path: '/admin/articles', label: 'Article Management', icon: <FaEdit className="w-5 h-5" /> },
+    
   ];
+
+  // Choose which menu items to display based on user role
+  const menuItemsToDisplay = isAdmin ? adminMenuItems : regularUserMenuItems;
 
   return (
     <>
@@ -137,7 +144,7 @@ const Sidebar = () => {
         {/* Navigation menu */}
         <nav className="flex flex-col h-full pb-20 overflow-y-auto">
           <div className="flex-1 px-2 py-4 space-y-1">
-            {menuItems.map((item) => (
+            {menuItemsToDisplay.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -153,28 +160,6 @@ const Sidebar = () => {
                 {isSidebarOpen && <span className="ml-3">{item.label}</span>}
               </NavLink>
             ))}
-
-            {/* Admin menu items */}
-            {isAdmin && (
-              <div className="pt-4 mt-4 border-t border-indigo-700">
-                {adminMenuItems.map((item) => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    className={({ isActive }) => `
-                      flex items-center p-2 rounded-md transition-colors duration-200
-                      ${isActive 
-                        ? 'bg-indigo-700 text-white' 
-                        : 'text-indigo-100 hover:bg-indigo-700 hover:text-white'}
-                      ${!isSidebarOpen && 'justify-center'}
-                    `}
-                  >
-                    <span className="flex-shrink-0">{item.icon}</span>
-                    {isSidebarOpen && <span className="ml-3">{item.label}</span>}
-                  </NavLink>
-                ))}
-              </div>
-            )}
           </div>
 
           {/* Logout button */}

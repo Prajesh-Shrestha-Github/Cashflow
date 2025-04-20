@@ -1,18 +1,16 @@
 import { useEffect } from 'react';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import UserDashboard from '../components/dashboard/UserDashboard';
-import { logoutUser } from '../services/auth';
-import FinancialHealthBar from '../components/financial-health/FinancialHealthBar'; // Adjusted path
 import { useFinancialHealth } from '../context/FinancialHealthContext';
-import Navbar from '../components/common/Navbar';
+import FinancialHealthBar from '../components/financial-health/FinancialHealthBar';
 import { useTransactions } from '../context/TransactionContext';
 import RecurringTransactions from '../components/dashboard/RecurringTransactions';
 
 const DashboardPage = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { currentHealth, fetchCurrentHealth } = useFinancialHealth();
-  const { summary, loading } = useTransactions();
+  const { summary } = useTransactions();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,124 +23,59 @@ const DashboardPage = () => {
     }
   }, [user, navigate, fetchCurrentHealth]);
 
-  const handleLogout = async () => {
-    try {
-      await logoutUser();
-      logout();
-      navigate('/login');
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
+  if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Navigation Bar */}
-      <Navbar />
-      <nav className="bg-white shadow-sm">
-      
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-gray-800">Cashflow</h1>
-              </div>
-              <nav className="ml-10">
-                <ul className="flex space-x-4">
-                  <li>
-                    <NavLink
-                      to="/dashboard"
-                      end
-                      className={({ isActive }) =>
-                        isActive ? 'text-indigo-600 font-bold' : 'text-gray-700'
-                      }
-                    >
-                      Dashboard
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/transactions"
-                      className={({ isActive }) =>
-                        isActive ? 'text-indigo-600 font-bold' : 'text-gray-700'
-                      }
-                    >
-                      Transactions
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/goals"
-                      className={({ isActive }) =>
-                        isActive ? 'text-indigo-600 font-bold' : 'text-gray-700'
-                      }
-                    >
-                      Goals
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/financial-health"
-                      className={({ isActive }) =>
-                        isActive ? 'text-indigo-600 font-bold' : 'text-gray-700'
-                      }
-                    >
-                      Financial Health 
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/ai-advisor"
-                      className={({ isActive }) =>
-                        isActive ? 'text-indigo-600 font-bold' : 'text-gray-700'
-                      }
-                    >
-                      AI Advisor
-                    </NavLink>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-            <div className="flex items-center">
-              <span className="text-gray-700 mr-4">
-                Welcome, {user?.first_name || user?.username}
-              </span>
-              <button
-                onClick={handleLogout}
-                className="ml-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+        <div className="text-sm text-gray-500">
+          Welcome back, <span className="font-medium">{user.username || user.email}</span>
         </div>
-      </nav>
+      </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Financial Health Bar */}
-          {currentHealth && (
-            <div className="bg-white p-4 rounded-lg shadow-md">
-              <h2 className="text-lg font-semibold mb-2">Current Health</h2>
-              <FinancialHealthBar
-                healthStatus={currentHealth.health_status}
-                savingsRate={currentHealth.savings_rate}
-              />
+      {/* Financial Health Summary */}
+      {currentHealth && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+            <h2 className="text-xl font-semibold text-gray-800">Financial Health</h2>
+            <div className="mt-2 md:mt-0">
+              <span 
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  currentHealth.score >= 80
+                    ? 'bg-green-100 text-green-800'
+                    : currentHealth.score >= 60
+                    ? 'bg-blue-100 text-blue-800'
+                    : currentHealth.score >= 40
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-red-100 text-red-800'
+                }`}
+              >
+                Score: {currentHealth.score}/100
+              </span>
             </div>
-          )}
-          <div className="lg:col-span-1">
-            <RecurringTransactions />
-            {/* Other sidebar widgets */}
           </div>
-          {/* User Dashboard */}
-          <div className="bg-white p-4 rounded-lg shadow-md col-span-1 md:col-span-2 lg:col-span-3">
-            <h2 className="text-lg font-semibold mb-2">User Overview</h2>
-            <UserDashboard />
-          </div>
+          
+          <FinancialHealthBar 
+            healthStatus={currentHealth.health_status} 
+            savingsRate={currentHealth.savings_rate} 
+          />
+          
+          <p className="mt-4 text-gray-600">
+            {currentHealth.message || 'Maintain your financial habits to improve your score.'}
+          </p>
         </div>
-      </main>
+      )}
+
+      {/* Main Dashboard Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <UserDashboard />
+        </div>
+        <div className="lg:col-span-1">
+          <RecurringTransactions />
+        </div>
+      </div>
     </div>
   );
 };

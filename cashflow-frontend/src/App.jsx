@@ -5,6 +5,7 @@ import { TransactionProvider } from './context/TransactionContext';
 import { FinancialHealthProvider } from './context/FinancialHealthContext';
 import { AIRecommendationProvider } from './context/AIRecommendationContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import Layout from './components/layout/Layout';
 import { Toaster } from 'react-hot-toast';
 import { ReminderProvider } from './context/ReminderContext';
 
@@ -42,9 +43,17 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           
-          {/* Article Routes */}
-          <Route path="/articles" element={<ArticlesPage />} />
-          <Route path="/articles/:slug" element={<ArticleDetailPage />} />
+          {/* Article Routes - These are public but will show sidebar if authenticated */}
+          <Route path="/articles" element={
+            <Layout>
+              <ArticlesPage />
+            </Layout>
+          } />
+          <Route path="/articles/:slug" element={
+            <Layout>
+              <ArticleDetailPage />
+            </Layout>
+          } />
           
           {/* Protected Routes */}
           <Route
@@ -54,7 +63,9 @@ function App() {
                 <ReminderProvider>
                   <TransactionProvider>
                     <FinancialHealthProvider>
-                      <DashboardPage />
+                      <Layout>
+                        <DashboardPage />
+                      </Layout>
                     </FinancialHealthProvider>
                   </TransactionProvider>
                 </ReminderProvider>
@@ -67,46 +78,60 @@ function App() {
             element={
               <ProtectedRoute>
                 <TransactionProvider>
-                  <TransactionsPage />
+                  <Layout>
+                    <TransactionsPage />
+                  </Layout>
                 </TransactionProvider>
               </ProtectedRoute>
             }
           />
+          
           <Route
             path="/goals"
             element={
               <ProtectedRoute>
                 <GoalsProvider>
-                  <GoalsPage />
+                  <Layout>
+                    <GoalsPage />
+                  </Layout>
                 </GoalsProvider>
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/ai-advisor"
-            element={
-              <ProtectedRoute>
-                <AIRecommendationProvider>
-                  <AIAdvisorPage />
-                </AIRecommendationProvider>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/bookmarks"
-            element={
-              <ProtectedRoute>
-                <BookmarksPage />
-              </ProtectedRoute>
-            }
-          />
+          
           <Route
             path="/financial-health"
             element={
               <ProtectedRoute>
                 <FinancialHealthProvider>
-                  <FinancialHealthPage />
+                  <Layout>
+                    <FinancialHealthPage />
+                  </Layout>
                 </FinancialHealthProvider>
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/ai-advisor"
+            element={
+              <ProtectedRoute>
+                <AIRecommendationProvider>
+                  <Layout>
+                    <AIAdvisorPage />
+                  </Layout>
+                </AIRecommendationProvider>
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/bookmarks"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <BookmarksPage />
+                </Layout>
               </ProtectedRoute>
             }
           />
@@ -116,31 +141,42 @@ function App() {
             path="/admin-dashboard"
             element={
               <ProtectedRoute requireAdmin={true}>
-                <AdminDashboardPage />
+                <Layout>
+                  <AdminDashboardPage />
+                </Layout>
               </ProtectedRoute>
             }
           />
+          
           <Route 
             path="/admin/articles" 
             element={
               <ProtectedRoute requireAdmin={true}>
-                <ArticlesManagementPage />
+                <Layout>
+                  <ArticlesManagementPage />
+                </Layout>
               </ProtectedRoute>
             } 
           />
+          
           <Route 
             path="/admin/articles/new" 
             element={
               <ProtectedRoute requireAdmin={true}>
-                <CreateArticlePage />
+                <Layout>
+                  <CreateArticlePage />
+                </Layout>
               </ProtectedRoute>
             } 
           />
+          
           <Route 
             path="/admin/articles/edit/:slug" 
             element={
               <ProtectedRoute requireAdmin={true}>
-                <EditArticlePage />
+                <Layout>
+                  <EditArticlePage />
+                </Layout>
               </ProtectedRoute>
             } 
           />

@@ -1,5 +1,5 @@
 // src/components/common/Sidebar.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { logoutUser } from '../../services/auth';
@@ -24,6 +24,7 @@ const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isAdmin = user?.is_admin;
+  const sidebarRef = useRef(null);
 
   // Automatically collapse sidebar on small screens
   useEffect(() => {
@@ -39,6 +40,17 @@ const Sidebar = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Close sidebar when clicking outside on desktop
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (isSidebarOpen && !isMobileMenuOpen && sidebarRef.current && !sidebarRef.current.contains(e.target)) {
+        setIsSidebarOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isSidebarOpen, isMobileMenuOpen]);
 
   const handleLogout = async () => {
     try {
@@ -97,6 +109,7 @@ const Sidebar = () => {
 
       {/* Sidebar container */}
       <div
+        ref={sidebarRef}
         className={`fixed inset-y-0 left-0 z-20 transform ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 transition-transform duration-300 ease-in-out ${

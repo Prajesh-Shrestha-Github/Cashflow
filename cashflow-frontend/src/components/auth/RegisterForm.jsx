@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../../services/auth';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,8 @@ const RegisterForm = () => {
   
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -125,16 +128,25 @@ const RegisterForm = () => {
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Password"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={formData.password}
+                onChange={handleChange}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
             {errors.password && (
               <p className="mt-1 text-sm text-red-600">{errors.password}</p>
             )}
@@ -144,16 +156,25 @@ const RegisterForm = () => {
             <label htmlFor="password2" className="block text-sm font-medium text-gray-700">
               Confirm Password
             </label>
-            <input
-              id="password2"
-              name="password2"
-              type="password"
-              required
-              value={formData.password2}
-              onChange={handleChange}
-              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Confirm Password"
-            />
+            <div className="relative">
+              <input
+                id="password2"
+                name="password2"
+                type={showPassword2 ? 'text' : 'password'}
+                required
+                value={formData.password2}
+                onChange={handleChange}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Confirm Password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword2(prev => !prev)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+              >
+                {showPassword2 ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
             {errors.password2 && (
               <p className="mt-1 text-sm text-red-600">{errors.password2}</p>
             )}

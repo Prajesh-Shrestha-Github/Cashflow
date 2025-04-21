@@ -153,9 +153,9 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6 px-4 sm:px-6 lg:px-8">
       {/* Admin Actions */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
           <h2 className="text-xl font-semibold">Admin Dashboard</h2>
           <div className="mt-3 md:mt-0 space-y-2 md:space-y-0 md:space-x-2">
@@ -185,8 +185,8 @@ const AdminDashboard = () => {
       </div>
       
       {/* Summary Cards */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-purple-50 p-4 rounded-md">
             <h3 className="text-sm font-medium text-purple-500">Total Users</h3>
             <p className="text-2xl font-bold">{adminData.user_stats.total_users.toLocaleString()}</p>
@@ -207,11 +207,11 @@ const AdminDashboard = () => {
       </div>
       
       {/* Charts Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* User Growth Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
           <h2 className="text-xl font-semibold mb-4">User Growth</h2>
-          <div className="h-64">
+          <div className="h-48 sm:h-64 md:h-80">
             <Line 
               data={userGrowthData} 
               options={{ 
@@ -230,9 +230,9 @@ const AdminDashboard = () => {
         </div>
         
         {/* Transaction Volume Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
           <h2 className="text-xl font-semibold mb-4">Transaction Volume</h2>
-          <div className="h-64">
+          <div className="h-48 sm:h-64 md:h-80">
             <Bar 
               data={transactionVolumeData} 
               options={{ 
@@ -251,9 +251,9 @@ const AdminDashboard = () => {
         </div>
         
         {/* Category Distribution Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
           <h2 className="text-xl font-semibold mb-4">Top Expense Categories</h2>
-          <div className="h-64">
+          <div className="h-48 sm:h-64 md:h-80">
             <Pie data={categoryDistributionData} options={{ maintainAspectRatio: false }} />
           </div>
         </div>
@@ -278,7 +278,7 @@ const AdminDashboard = () => {
       {/* Users Table */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Users</h2>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto sm:rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>

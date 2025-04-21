@@ -18,10 +18,9 @@ import {
   FaEdit
 } from 'react-icons/fa';
 
-const Sidebar = () => {
+const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isAdmin = user?.is_admin;
   const sidebarRef = useRef(null);
@@ -39,7 +38,7 @@ const Sidebar = () => {
     handleResize(); // Set initial state
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [setIsSidebarOpen]);
 
   // Close sidebar when clicking outside on desktop
   useEffect(() => {
@@ -50,7 +49,7 @@ const Sidebar = () => {
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isSidebarOpen, isMobileMenuOpen]);
+  }, [isSidebarOpen, isMobileMenuOpen, setIsSidebarOpen]);
 
   const handleLogout = async () => {
     try {

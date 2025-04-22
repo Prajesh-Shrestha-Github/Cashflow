@@ -16,7 +16,7 @@ const ForgotPasswordForm = ({ onSuccess }) => {
       setMessage("A reset token has been sent to your email.");
       onSuccess();
     } catch (err) {
-      setError(err?.error || "Something went wrong.");
+      setError("Please enter the correct email address.");
     }
   };
 

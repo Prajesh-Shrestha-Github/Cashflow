@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { resetPassword } from "../../services/auth";
 import { useNavigate } from "react-router-dom";
 
 const ResetPasswordForm = () => {
   const [token, setToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -44,14 +46,23 @@ const ResetPasswordForm = () => {
           onChange={(e) => setToken(e.target.value)}
           required
         />
-        <input
-          type="password"
-          className="w-full p-2 border rounded"
-          placeholder="New Password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-        />
+        <div className="relative">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            className="w-full p-2 border rounded"
+            placeholder="New Password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(prev => !prev)}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        </div>
         <div className="flex space-x-3">
           <button type="submit" className="flex-1 bg-blue-500 text-white p-2 rounded">
             Reset Password

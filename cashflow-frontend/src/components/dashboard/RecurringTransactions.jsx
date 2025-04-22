@@ -58,7 +58,7 @@ const RecurringTransactions = () => {
   };
 
   if (loading) return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="h-64 bg-white rounded-lg shadow p-6 flex items-center justify-center">
       <h2 className="text-xl font-semibold mb-4">Upcoming Expenses</h2>
       <div className="py-8 text-center text-gray-500">
         <svg className="animate-spin h-8 w-8 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -71,7 +71,7 @@ const RecurringTransactions = () => {
   );
 
   if (error) return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="h-64 bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold mb-4">Upcoming Expenses</h2>
       <div className="py-4 text-center text-red-500">
         <p>{error}</p>
@@ -80,7 +80,7 @@ const RecurringTransactions = () => {
   );
 
   if (reminders.length === 0) return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="h-64 bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold mb-4">Upcoming Expenses</h2>
       <div className="py-8 text-center text-gray-500">
         <svg className="h-12 w-12 mx-auto mb-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,7 +93,7 @@ const RecurringTransactions = () => {
   );
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="h-64 bg-white rounded-lg shadow p-6 overflow-auto">
       <h2 className="text-xl font-semibold mb-4">Upcoming Expenses</h2>
       <div className="space-y-4">
         {reminders.map((reminder) => (

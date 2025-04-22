@@ -13,7 +13,7 @@ const FinancialHealthBar = ({ healthStatus, savingsRate }) => {
   const status = statusStyles[healthStatus] || statusStyles.critical;
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full h-full flex flex-col justify-between">
       <h3 className="text-lg font-semibold mb-2">Financial Health</h3>
       <div className="relative w-full h-6 bg-gray-200 rounded-full overflow-hidden">
         <div

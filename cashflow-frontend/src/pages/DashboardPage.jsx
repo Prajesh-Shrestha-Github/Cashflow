@@ -45,14 +45,11 @@ const DashboardPage = () => {
         <div className="lg:col-span-1 space-y-6">
           {/* Financial Health Summary */}
           {currentHealth && (
-            <div className="bg-white rounded-lg shadow p-4">
-    
-              
+            <div className="bg-white rounded-lg shadow p-4 h-64 flex flex-col justify-between">
               <FinancialHealthBar 
                 healthStatus={currentHealth.health_status} 
                 savingsRate={currentHealth.savings_rate} 
               />
-              
               <p className="mt-3 text-sm text-gray-600">
                 {currentHealth.message || 'Maintain your financial habits to improve your score.'}
               </p>

@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
                 ('date', models.DateField(default=django.utils.timezone.now)),
                 ('notes', models.TextField(blank=True, null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('goal', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contributions', to='financial_goals.financialgoal')),
+                ('goal', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contributions', to='financial_goals_and_health.financialgoal')),
             ],
         ),
         migrations.CreateModel(

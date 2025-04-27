@@ -136,6 +136,17 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite default port
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# Test settings - use SQLite for tests to avoid migration issues
+import sys
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
+    }
+
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')

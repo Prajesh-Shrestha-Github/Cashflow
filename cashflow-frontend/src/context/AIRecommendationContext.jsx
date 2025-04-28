@@ -23,8 +23,10 @@ export const AIRecommendationProvider = ({ children }) => {
     try {
       const data = await aiRecommendationService.getRecommendationHistory();
       setRecommendations(data);
-      // Update remaining requests based on fetched history
-      setRemainingRequests(Math.max(DAILY_LIMIT - data.length, 0));
+      // Compute today's request count and reset daily remainingRequests
+      const todayString = new Date().toDateString();
+      const todayCount = data.filter(r => new Date(r.created_at).toDateString() === todayString).length;
+      setRemainingRequests(Math.max(DAILY_LIMIT - todayCount, 0));
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -60,6 +62,18 @@ export const AIRecommendationProvider = ({ children }) => {
     if (user) {
       fetchRecommendationHistory();
     }
+  }, [user, fetchRecommendationHistory]);
+
+  // Schedule daily reset at midnight
+  useEffect(() => {
+    if (!user) return;
+    const now = new Date();
+    const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const msUntilMidnight = nextMidnight.getTime() - now.getTime();
+    const timer = setTimeout(() => {
+      fetchRecommendationHistory();
+    }, msUntilMidnight);
+    return () => clearTimeout(timer);
   }, [user, fetchRecommendationHistory]);
 
   return (

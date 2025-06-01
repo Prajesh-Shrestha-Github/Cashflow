@@ -18,7 +18,7 @@ const DashboardPage = () => {
       if (user.is_admin) {
         navigate('/admin-dashboard');
       } else {
-        fetchCurrentHealth(); // Fetch financial health data for the bar
+        fetchCurrentHealth(); 
       }
     }
   }, [user, navigate, fetchCurrentHealth]);

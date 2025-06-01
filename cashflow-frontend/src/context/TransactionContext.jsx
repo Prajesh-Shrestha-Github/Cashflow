@@ -126,15 +126,31 @@ export const TransactionProvider = ({ children }) => {
     try {
       setLoading(true);
       const result = await transactionService.importCSV(file);
+      
+      // Check if there are any errors in the response
+      if (result.errors && result.errors.length > 0) {
+        toast.error('CSV import had errors. Please check the error details.');
+        return { 
+          success: false, 
+          errors: result.errors,
+          message: result.message
+        };
+      }
+      
+      // Success case
       toast.success(result.message);
       await fetchTransactions();
       await fetchSummary();
       await fetchAvailableGoals();
-      return true;
+      return { success: true };
     } catch (err) {
-      toast.error('Failed to import CSV');
+      const errorMessage = err.response?.data?.error || 'Failed to import CSV. Please check your file format.';
+      toast.error(errorMessage);
       console.error(err);
-      return false;
+      return { 
+        success: false, 
+        errors: [errorMessage]
+      };
     } finally {
       setLoading(false);
     }

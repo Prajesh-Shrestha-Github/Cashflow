@@ -6,6 +6,7 @@ const CsvImport = () => {
   const { importCSV, loading } = useTransactions();
   const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
+  const [importErrors, setImportErrors] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   
   const handleFileChange = (e) => {
@@ -14,6 +15,7 @@ const CsvImport = () => {
     if (selectedFile && selectedFile.name.endsWith('.csv')) {
       setFile(selectedFile);
       setError(null);
+      setImportErrors([]);
     } else if (selectedFile) {
       setFile(null);
       setError('Please select a CSV file');
@@ -29,13 +31,19 @@ const CsvImport = () => {
     }
     
     setIsUploading(true);
+    setImportErrors([]);
     try {
-      await importCSV(file);
-      setFile(null);
-      // Reset the file input
-      e.target.reset();
+      const result = await importCSV(file);
+      if (result && result.success) {
+        setFile(null);
+        // Reset the file input
+        e.target.reset();
+      } else if (result && result.errors) {
+        setImportErrors(result.errors);
+      }
     } catch (err) {
       console.error('Upload failed:', err);
+      setError('Failed to import CSV. Please check your file format.');
     } finally {
       setIsUploading(false);
     }
@@ -67,6 +75,20 @@ const CsvImport = () => {
             CSV file should have columns: date, amount, category_name, description
           </p>
         </div>
+        
+        {importErrors.length > 0 && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+            <h3 className="text-sm font-medium text-red-800 mb-1">Import Errors:</h3>
+            <ul className="list-disc list-inside text-xs text-red-700 space-y-1">
+              {importErrors.map((err, index) => (
+                <li key={index}>{err}</li>
+              ))}
+            </ul>
+            <p className="mt-2 text-xs text-red-700">
+              Please check your CSV format and try again. Make sure column names and data formats are correct.
+            </p>
+          </div>
+        )}
         
         <div className="flex justify-end">
           <button

@@ -2,7 +2,6 @@ from django.test import SimpleTestCase, tag
 from rest_framework.validators import UniqueValidator
 from accounts.serializers import RegisterSerializer, LoginSerializer, ChangePasswordSerializer
 
-# Create your tests here.
 
 # Isolated serializer validation tests with SimpleTestCase (no database)
 @tag('isolated')

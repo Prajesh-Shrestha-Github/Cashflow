@@ -10,7 +10,9 @@ export const useAIRecommendation = () => useContext(AIRecommendationContext);
 export const AIRecommendationProvider = ({ children }) => {
   const { user } = useAuth();
   const [recommendations, setRecommendations] = useState([]);
-  const [remainingRequests, setRemainingRequests] = useState(3);
+  // Daily request limit constant
+  const DAILY_LIMIT = 3;
+  const [remainingRequests, setRemainingRequests] = useState(DAILY_LIMIT);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -21,6 +23,8 @@ export const AIRecommendationProvider = ({ children }) => {
     try {
       const data = await aiRecommendationService.getRecommendationHistory();
       setRecommendations(data);
+      // Update remaining requests based on fetched history
+      setRemainingRequests(Math.max(DAILY_LIMIT - data.length, 0));
       setError(null);
     } catch (err) {
       setError(err.message);

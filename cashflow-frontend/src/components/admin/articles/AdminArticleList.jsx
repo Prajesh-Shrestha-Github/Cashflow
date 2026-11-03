@@ -57,10 +57,10 @@ const AdminArticleList = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800">Manage Articles</h2>
+        <h1 className="font-display text-4xl font-extrabold tracking-[-0.035em] text-ink sm:text-5xl">Manage Articles</h1>
         <Link 
           to="/admin/articles/new" 
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className="btn-primary"
         >
           Add New Article
         </Link>
@@ -73,11 +73,11 @@ const AdminArticleList = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search articles..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border border-line rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/40"
           />
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="btn-primary"
           >
             Search
           </button>
@@ -85,72 +85,72 @@ const AdminArticleList = () => {
       </div>
       
       {error && (
-        <div className="p-4 bg-red-100 text-red-700 rounded-md mb-6">
+        <div className="p-4 bg-signal/10 text-signal rounded-lg mb-6">
           {error}
         </div>
       )}
       
       {articles.length === 0 ? (
-        <div className="text-center py-10 bg-white rounded-lg shadow-md">
-          <p className="text-gray-500">No articles found.</p>
+        <div className="text-center py-10 bg-card rounded-xl shadow-card">
+          <p className="text-ink-mute">No articles found.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="bg-card rounded-xl shadow-card overflow-hidden">
+          <table className="min-w-full divide-y divide-line">
+            <thead className="bg-paper">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">
                   Title
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">
                   Status
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">
                   Date
                 </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-ink-mute uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-card divide-y divide-line">
               {articles.map((article) => (
-                <tr key={article.id} className="hover:bg-gray-50">
+                <tr key={article.id} className="hover:bg-paper">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
+                    <div className="text-sm font-medium text-ink">
                       {article.title}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                       article.is_published 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
+                        ? 'bg-brand-tint text-brand-dark' 
+                        : 'bg-accent-tint text-forest'
                     }`}>
                       {article.is_published ? 'Published' : 'Draft'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-ink-mute">
                     {formatDate(article.created_at)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
-                      <Link to={`/admin/articles/edit/${article.slug}`} className="text-blue-600 hover:text-blue-900">
+                      <Link to={`/admin/articles/edit/${article.slug}`} className="text-brand hover:text-brand-dark">
                         Edit
                       </Link>
                       <button 
                         onClick={() => handleTogglePublished(article.slug, article.is_published, article.title)}
                         className={`${
                           article.is_published 
-                            ? 'text-yellow-600 hover:text-yellow-900' 
-                            : 'text-green-600 hover:text-green-900'
+                            ? 'text-forest hover:text-forest' 
+                            : 'text-brand hover:text-brand-dark'
                         }`}
                       >
                         {article.is_published ? 'Unpublish' : 'Publish'}
                       </button>
                       <button 
                         onClick={() => handleDeleteArticle(article.slug, article.title)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-signal hover:text-signal"
                         disabled={isDeleting}
                       >
                         Delete

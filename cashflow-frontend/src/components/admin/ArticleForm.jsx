@@ -57,7 +57,7 @@ const ArticleForm = ({ article, onSubmit, loading }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="title" className="block text-sm font-medium text-ink-soft">
           Title *
         </label>
         <input
@@ -66,13 +66,13 @@ const ArticleForm = ({ article, onSubmit, loading }) => {
           name="title"
           value={formData.title}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className="field mt-1"
           required
         />
       </div>
       
       <div>
-        <label htmlFor="summary" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="summary" className="block text-sm font-medium text-ink-soft">
           Summary
         </label>
         <textarea
@@ -81,13 +81,13 @@ const ArticleForm = ({ article, onSubmit, loading }) => {
           rows="3"
           value={formData.summary}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className="field mt-1"
           placeholder="Brief summary of the article"
         />
       </div>
       
       <div>
-        <label htmlFor="content" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="content" className="block text-sm font-medium text-ink-soft">
           Content *
         </label>
         <textarea
@@ -96,13 +96,13 @@ const ArticleForm = ({ article, onSubmit, loading }) => {
           rows="10"
           value={formData.content}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className="field mt-1"
           required
         />
       </div>
       
       <div>
-        <label htmlFor="image_url" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="image_url" className="block text-sm font-medium text-ink-soft">
           Image URL
         </label>
         <input
@@ -111,7 +111,7 @@ const ArticleForm = ({ article, onSubmit, loading }) => {
           name="image_url"
           value={formData.image_url}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className="field mt-1"
           placeholder="https://example.com/image.jpg"
         />
       </div>
@@ -123,9 +123,9 @@ const ArticleForm = ({ article, onSubmit, loading }) => {
           name="is_published"
           checked={formData.is_published}
           onChange={handleChange}
-          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+          className="h-4 w-4 text-brand focus:ring-brand/40 border-line rounded"
         />
-        <label htmlFor="is_published" className="ml-2 block text-sm text-gray-700">
+        <label htmlFor="is_published" className="ml-2 block text-sm text-ink-soft">
           Publish immediately
         </label>
       </div>
@@ -134,14 +134,14 @@ const ArticleForm = ({ article, onSubmit, loading }) => {
         <button
           type="button"
           onClick={() => navigate('/admin/articles')}
-          className="bg-gray-200 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="bg-line py-2 px-4 border border-line rounded-lg shadow-card text-sm font-medium text-ink-soft hover:bg-line focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand/40"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+          className="btn-primary"
         >
           {loading ? (
             <>

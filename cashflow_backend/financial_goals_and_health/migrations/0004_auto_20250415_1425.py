@@ -2,23 +2,40 @@
 
 from django.db import migrations
 
+# The app was originally called "financial_goals". Databases created back then
+# have tables with the old prefix; fresh databases already get the new names
+# from 0001_initial. Rename only when the old table exists and the new one
+# does not, so this migration works on both.
+RENAMES = [
+    ("financial_goals_financialgoal", "financial_goals_and_health_financialgoal"),
+    ("financial_goals_financialhealth", "financial_goals_and_health_financialhealth"),
+]
+
+
+def _rename(schema_editor, pairs):
+    existing = set(schema_editor.connection.introspection.table_names())
+    for old, new in pairs:
+        if old in existing and new not in existing:
+            schema_editor.execute(
+                "ALTER TABLE %s RENAME TO %s"
+                % (schema_editor.quote_name(old), schema_editor.quote_name(new))
+            )
+
+
+def forwards(apps, schema_editor):
+    _rename(schema_editor, RENAMES)
+
+
+def backwards(apps, schema_editor):
+    _rename(schema_editor, [(new, old) for old, new in RENAMES])
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        # This dependency should point to your *previous* migration in this app
         ('financial_goals_and_health', '0003_alter_financialgoal_start_date_and_more'),
     ]
 
     operations = [
-        # Rename the FinancialGoal table
-        migrations.RunSQL(
-            sql="ALTER TABLE financial_goals_financialgoal RENAME TO financial_goals_and_health_financialgoal;",
-            reverse_sql="ALTER TABLE financial_goals_and_health_financialgoal RENAME TO financial_goals_financialgoal;"
-        ),
-
-        # Rename the FinancialHealth table
-        migrations.RunSQL(
-            sql="ALTER TABLE financial_goals_financialhealth RENAME TO financial_goals_and_health_financialhealth;",
-            reverse_sql="ALTER TABLE financial_goals_and_health_financialhealth RENAME TO financial_goals_financialhealth;"
-        ),
+        migrations.RunPython(forwards, backwards),
     ]

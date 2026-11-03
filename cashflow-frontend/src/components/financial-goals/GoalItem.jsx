@@ -58,10 +58,10 @@ const GoalItem = ({ goal }) => {
 
   // Function to calculate appropriate color based on completion percentage
   const getProgressColor = (percentage) => {
-    if (percentage < 25) return "bg-red-500";
-    if (percentage < 50) return "bg-orange-500";
-    if (percentage < 75) return "bg-yellow-500";
-    return "bg-green-500";
+    if (percentage < 25) return "bg-signal";
+    if (percentage < 50) return "bg-accent";
+    if (percentage < 75) return "bg-accent";
+    return "bg-brand";
   };
 
   // Format date for display
@@ -113,17 +113,17 @@ const GoalItem = ({ goal }) => {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+    <div className="bg-card border border-line rounded-xl shadow-card hover:shadow-card transition-shadow duration-300">
       {isEditing ? (
         <form onSubmit={handleUpdate} className="p-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Edit Goal</h3>
+          <h3 className="text-lg font-semibold text-ink mb-4">Edit Goal</h3>
           
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+              <label className="label">Title</label>
               <input
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="field"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
@@ -131,10 +131,10 @@ const GoalItem = ({ goal }) => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Target Amount ($)</label>
+              <label className="label">Target Amount ($)</label>
               <input
                 type="number"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="field"
                 value={formData.target_amount}
                 onChange={(e) => setFormData({ ...formData, target_amount: e.target.value })}
                 required
@@ -144,10 +144,10 @@ const GoalItem = ({ goal }) => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Target Date</label>
+              <label className="label">Target Date</label>
               <input
                 type="date"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="field"
                 value={formData.target_date}
                 onChange={(e) => setFormData({ ...formData, target_date: e.target.value })}
                 required
@@ -158,7 +158,7 @@ const GoalItem = ({ goal }) => {
           <div className="flex space-x-2 mt-4">
             <button
               type="submit"
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+              className="btn-primary flex-1"
               disabled={isSaving}
             >
               {isSaving ? (
@@ -174,7 +174,7 @@ const GoalItem = ({ goal }) => {
             <button
               type="button"
               onClick={() => setIsEditing(false)}
-              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              className="flex-1 bg-line hover:bg-line text-ink py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-line focus:ring-offset-2"
             >
               Cancel
             </button>
@@ -184,44 +184,44 @@ const GoalItem = ({ goal }) => {
         <div className="p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center">
-              <span className="inline-flex items-center justify-center p-2 bg-blue-100 text-blue-700 rounded-md mr-3">
+              <span className="inline-flex items-center justify-center p-2 bg-brand-tint text-brand-dark rounded-lg mr-3">
                 {getGoalTypeIcon()}
               </span>
-              <h3 className="text-lg font-semibold text-gray-800">{goal.title}</h3>
+              <h3 className="text-lg font-semibold text-ink">{goal.title}</h3>
             </div>
-            <div className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">
+            <div className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-brand-tint text-brand-dark">
               {goal.goal_type.replace('_', ' ')}
             </div>
           </div>
 
           <div className="mt-3">
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div className="w-full bg-line rounded-full h-2.5">
               <div 
                 className={`h-2.5 rounded-full ${getProgressColor(goal.completion_percentage)}`} 
                 style={{ width: `${goal.completion_percentage}%` }}
               ></div>
             </div>
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <div className="flex justify-between text-xs text-ink-mute mt-1">
               <span>{goal.completion_percentage}% complete</span>
               <span>{goal.days_remaining} days remaining</span>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4 my-4">
-            <div className="bg-gray-50 p-3 rounded-md">
-              <p className="text-xs text-gray-500">Target Amount</p>
-              <p className="text-lg font-bold text-gray-800">${parseFloat(goal.target_amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+            <div className="bg-paper p-3 rounded-lg">
+              <p className="text-xs text-ink-mute">Target Amount</p>
+              <p className="text-lg font-bold text-ink">${parseFloat(goal.target_amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
             </div>
-            <div className="bg-gray-50 p-3 rounded-md">
-              <p className="text-xs text-gray-500">Current Amount</p>
-              <p className="text-lg font-bold text-gray-800">${parseFloat(goal.current_amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+            <div className="bg-paper p-3 rounded-lg">
+              <p className="text-xs text-ink-mute">Current Amount</p>
+              <p className="text-lg font-bold text-ink">${parseFloat(goal.current_amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
             </div>
           </div>
           
-          <div className="border-t border-gray-200 pt-3 flex flex-wrap gap-2">
+          <div className="border-t border-line pt-3 flex flex-wrap gap-2">
             <button
               onClick={() => setIsEditing(true)}
-              className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="btn-ghost"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -231,7 +231,7 @@ const GoalItem = ({ goal }) => {
             
             <button
               onClick={confirmDelete}
-              className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm leading-5 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+              className="inline-flex items-center px-3 py-1.5 border border-line text-sm leading-5 font-medium rounded-lg text-signal bg-card hover:bg-signal/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-signal/40 disabled:opacity-50"
               disabled={isDeleting}
             >
               {isDeleting ? (
@@ -251,7 +251,7 @@ const GoalItem = ({ goal }) => {
             
             <button
               onClick={handleProgressUpdate}
-              className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm leading-5 font-medium rounded-md text-green-700 bg-white hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+              className="inline-flex items-center px-3 py-1.5 border border-line text-sm leading-5 font-medium rounded-lg text-brand-dark bg-card hover:bg-brand-tint focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand/40 disabled:opacity-50"
               disabled={isUpdatingProgress}
             >
               {isUpdatingProgress ? (
@@ -271,7 +271,7 @@ const GoalItem = ({ goal }) => {
             
             <button
               onClick={() => setShowTransactions(!showTransactions)}
-              className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="btn-ghost"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -281,7 +281,7 @@ const GoalItem = ({ goal }) => {
           </div>
           
           {showTransactions && (
-            <div className="mt-4 border-t border-gray-200 pt-4">
+            <div className="mt-4 border-t border-line pt-4">
               <GoalTransactions goalId={goal.id} />
             </div>
           )}

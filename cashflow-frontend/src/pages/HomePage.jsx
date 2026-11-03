@@ -32,7 +32,7 @@ const Num = ({ children, className = '' }) => (
 );
 
 const Tag = ({ children }) => (
-  <span className="rounded-full border border-line px-2 py-0.5 text-xs font-medium text-ink-mute">
+  <span className="rounded-full border border-line px-2 py-0.5 text-sm font-medium text-ink-mute">
     {children}
   </span>
 );
@@ -66,12 +66,6 @@ const Hero = () => (
           <Logo light />
         </Link>
         <div className="flex items-center gap-2">
-          <a href="#features" className="hidden rounded-lg px-3 py-2 text-sm text-paper/75 transition-colors hover:text-paper md:block">
-            Features
-          </a>
-          <a href="#how" className="hidden rounded-lg px-3 py-2 text-sm text-paper/75 transition-colors hover:text-paper md:block">
-            How it works
-          </a>
           <Link to="/login" className="rounded-xl px-4 py-2.5 text-sm font-semibold text-paper transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent">
             Sign in
           </Link>
@@ -123,7 +117,7 @@ const Preview = () => {
         {/* Net + categories */}
         <div className="bg-card p-6 sm:p-8">
           <div className="flex items-center justify-between">
-            <p className="eyebrow">October</p>
+            <p className="font-display text-xl font-bold">October</p>
             <Tag>Sample data</Tag>
           </div>
           <p className="mt-6 text-sm text-ink-mute">Net this month</p>
@@ -156,8 +150,8 @@ const Preview = () => {
         {/* Goal + due bill */}
         <div className="flex flex-col justify-between gap-8 bg-card p-6 sm:p-8">
           <div>
-            <p className="eyebrow">Goal</p>
-            <p className="mt-6 font-display text-xl font-bold">{SAMPLE.goal.title}</p>
+            <p className="font-display text-xl font-bold">Goal</p>
+            <p className="mt-6 text-base text-ink-soft">{SAMPLE.goal.title}</p>
             <p className="mt-1 font-display text-6xl font-extrabold tracking-tight">{pct}<span className="text-3xl text-ink-mute">%</span></p>
             <div
               className="mt-4 h-3 rounded-full bg-paper"
@@ -169,12 +163,12 @@ const Preview = () => {
             >
               <div className="h-3 rounded-full bg-brand" style={{ width: `${pct}%` }} />
             </div>
-            <p className="mt-2 text-xs text-ink-mute">
+            <p className="mt-2 text-sm text-ink-mute">
               <Num>{fmt(SAMPLE.goal.saved)}</Num> of <Num>{fmt(SAMPLE.goal.target)}</Num>
             </p>
           </div>
           <div className="rounded-xl bg-accent-tint p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-forest">Due in 3 days</p>
+            <p className="text-sm font-semibold text-forest">Due in 3 days</p>
             <div className="mt-1 flex items-baseline justify-between">
               <p className="font-medium">Electricity bill</p>
               <Num className="font-semibold">1,800.00</Num>
@@ -184,7 +178,7 @@ const Preview = () => {
 
         {/* Recent */}
         <div className="bg-card p-6 sm:p-8">
-          <p className="eyebrow">Recent</p>
+          <p className="font-display text-xl font-bold">Recent</p>
           <ul className="mt-6 divide-y divide-line text-sm">
             {SAMPLE.recent.map(([d, name, cat, amt]) => (
               <li key={name} className="py-3.5">
@@ -194,7 +188,7 @@ const Preview = () => {
                     {amt < 0 ? '−' : '+'}{fmt(Math.abs(amt))}
                   </Num>
                 </div>
-                <div className="mt-1 flex items-center gap-2 text-xs text-ink-mute">
+                <div className="mt-1 flex items-center gap-2 text-sm text-ink-mute">
                   <Num>{d}</Num>
                   <span className="chip bg-paper text-ink-soft">{cat}</span>
                 </div>
@@ -221,8 +215,7 @@ const Features = () => (
   <section id="features" className="wrap py-24 sm:py-32">
     <div className="grid gap-12 lg:grid-cols-[1fr_1.7fr]">
       <div className="lg:sticky lg:top-10 lg:self-start">
-        <p className="eyebrow">What you get</p>
-        <h2 className="mt-3 text-balance font-display text-5xl font-extrabold leading-[.98] tracking-[-0.03em] sm:text-6xl">
+        <h2 className="text-balance font-display text-5xl font-extrabold leading-[.98] tracking-[-0.03em] sm:text-6xl">
           The whole month, in one place.
         </h2>
         <p className="mt-5 max-w-sm text-lg leading-relaxed text-ink-mute">
@@ -231,43 +224,15 @@ const Features = () => (
         </p>
       </div>
       <ol className="border-b border-ink">
-        {FEATURES.map(([kicker, title, text], i) => (
-          <li key={kicker} className="group grid grid-cols-[3.5rem_1fr] gap-x-4 border-t border-ink py-7 sm:grid-cols-[5rem_1fr] sm:py-9">
+        {FEATURES.map(([, title, text], i) => (
+          <li key={title} className="group grid grid-cols-[3.5rem_1fr] gap-x-4 border-t border-ink py-7 sm:grid-cols-[5rem_1fr] sm:py-9">
             <span className="font-display text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
               {String(i + 1).padStart(2, '0')}
             </span>
             <div>
-              <p className="eyebrow">{kicker}</p>
-              <h3 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-3xl">{title}</h3>
+              <h3 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{title}</h3>
               <p className="mt-2 max-w-xl leading-relaxed text-ink-mute">{text}</p>
             </div>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-);
-
-/* ---------- How it works ---------- */
-
-const STEPS = [
-  ['Add what comes in and goes out', 'Record income and expenses with a category and a date.'],
-  ['Set goals and recurring bills', 'Tell Cashflow what you are saving for and what repeats.'],
-  ['Review the month', 'Check your health status and ask the assistant what to adjust.'],
-];
-
-const How = () => (
-  <section id="how" className="bg-brand-tint">
-    <div className="wrap py-20 sm:py-28">
-      <h2 className="font-display text-5xl font-extrabold tracking-[-0.03em] sm:text-6xl">How it works</h2>
-      <ol className="mt-12 grid gap-4 md:grid-cols-3">
-        {STEPS.map(([title, text], i) => (
-          <li key={title} className="rounded-3xl bg-card p-7 shadow-card sm:p-9">
-            <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-forest font-display text-xl font-extrabold text-paper">
-              {i + 1}
-            </span>
-            <h3 className="mt-8 font-display text-2xl font-bold tracking-tight">{title}</h3>
-            <p className="mt-2 leading-relaxed text-ink-mute">{text}</p>
           </li>
         ))}
       </ol>
@@ -326,7 +291,6 @@ const HomePage = () => {
         <Hero />
         <Preview />
         <Features />
-        <How />
         <Closing />
       </main>
       <Footer />

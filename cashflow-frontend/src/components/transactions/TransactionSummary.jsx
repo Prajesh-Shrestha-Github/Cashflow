@@ -55,7 +55,7 @@ const TransactionSummary = () => {
               style={{ width: `${Math.min(calculatePercentage(total_expenses, total_income), 100)}%` }}
             ></div>
           </div>
-          <p className="mt-2 text-xs text-ink-mute">
+          <p className="mt-2 text-sm text-ink-mute">
             You've spent {formatCurrency(total_expenses)} ({calculatePercentage(total_expenses, total_income)}%)
             of your {formatCurrency(total_income)} income
           </p>

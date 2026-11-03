@@ -25,13 +25,13 @@ const FinancialHealthPage = () => {
 
   return (
     <div>
-      <PageHeader eyebrow="Monthly read" title="Financial Health" subtitle="How your income and spending are balancing out, month by month." />
+      <PageHeader title="Financial Health" />
 
       <div className="grid gap-4 sm:gap-5 lg:grid-cols-3">
         {/* Current status */}
         {currentHealth && (
           <section className="card-pad lg:col-span-1">
-            <h2 className="eyebrow">Current Health</h2>
+            <h2 className="font-display text-2xl font-bold tracking-tight">Current Health</h2>
             <div className="mt-4">
               <FinancialHealthBar
                 hideTitle

@@ -118,7 +118,7 @@ const RecommendationChatbot = () => {
               onChange={(e) => setSarcasmLevel(parseInt(e.target.value))}
               className="w-full h-2 bg-brand-tint rounded-xl appearance-none cursor-pointer"
             />
-            <div className="flex justify-between text-xs text-ink-mute mt-1">
+            <div className="flex justify-between text-sm text-ink-mute mt-1">
               <span>Professional</span>
               <span>Mild</span>
               <span>Moderate</span>
@@ -220,7 +220,7 @@ const RecommendationChatbot = () => {
           </button>
         </div>
         {remainingRequests === 0 && (
-          <p className="mt-2 text-xs text-signal">
+          <p className="mt-2 text-sm text-signal">
             You've reached your daily limit of 3 AI recommendations. Please try again tomorrow!
           </p>
         )}

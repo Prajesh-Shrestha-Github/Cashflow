@@ -28,7 +28,7 @@ const DashboardPage = () => {
 
   return (
     <div>
-      <PageHeader eyebrow="Overview" title="Dashboard" subtitle={`Welcome back, ${user.username || user.email}`}>
+      <PageHeader title="Dashboard">
         <Link to="/transactions" state={{ openForm: true }} className="btn-accent px-6 py-3 text-base">
           Add transaction
         </Link>

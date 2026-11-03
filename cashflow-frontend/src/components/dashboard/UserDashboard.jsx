@@ -178,8 +178,8 @@ const UserDashboard = () => {
 
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[.14em] text-paper/60">
-              Balance · this {timeRange}
+            <p className="text-sm font-semibold tracking-[.14em] text-paper/60">
+              Balance this {timeRange}
             </p>
             <h2 className="sr-only">Welcome, {user.first_name || user.username}!</h2>
           </div>
@@ -318,7 +318,7 @@ const UserDashboard = () => {
         <div className="mt-4 overflow-x-auto">
           <table className="min-w-full">
             <thead>
-              <tr className="border-b border-ink/15 text-left text-xs font-semibold uppercase tracking-wider text-ink-mute">
+              <tr className="border-b border-ink/15 text-left text-sm font-semibold text-ink-mute">
                 <th className="py-3 pr-6">Date</th>
                 <th className="py-3 pr-6">Category</th>
                 <th className="py-3 pr-6">Type</th>

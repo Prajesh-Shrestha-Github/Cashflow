@@ -44,7 +44,6 @@ const RegisterForm = () => {
     <div className="w-full">
       <div>
         <h1 className="font-display text-4xl font-extrabold tracking-[-0.03em] text-ink sm:text-5xl">Create your account</h1>
-        <p className="mt-3 text-base text-ink-mute">It takes about a minute.</p>
       </div>
       
       {errors.general && (

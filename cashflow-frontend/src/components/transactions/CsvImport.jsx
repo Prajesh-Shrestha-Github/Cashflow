@@ -79,12 +79,12 @@ const CsvImport = () => {
         {importErrors.length > 0 && (
           <div className="mb-4 p-3 bg-signal/10 border border-signal/30 rounded-lg">
             <h3 className="text-sm font-medium text-signal mb-1">Import Errors:</h3>
-            <ul className="list-disc list-inside text-xs text-signal space-y-1">
+            <ul className="list-disc list-inside text-sm text-signal space-y-1">
               {importErrors.map((err, index) => (
                 <li key={index}>{err}</li>
               ))}
             </ul>
-            <p className="mt-2 text-xs text-signal">
+            <p className="mt-2 text-sm text-signal">
               Please check your CSV format and try again. Make sure column names and data formats are correct.
             </p>
           </div>

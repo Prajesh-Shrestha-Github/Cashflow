@@ -19,7 +19,7 @@ const AdminDashboardPage = () => {
   
   return (
     <div className="space-y-5">
-      <PageHeader eyebrow="Admin" title="Admin Dashboard" subtitle={`Logged in as ${user?.username || user?.email}`} />
+      <PageHeader title="Admin Dashboard" />
 
       {/* Admin Dashboard Component */}
       <div className="card-pad">

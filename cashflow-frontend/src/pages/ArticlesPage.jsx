@@ -8,7 +8,7 @@ const ArticlesPage = () => {
   return (
     <ArticlesProvider>
       <div>
-        <PageHeader eyebrow="Learn" title="Articles" subtitle="Short reads on budgeting, saving and bills." />
+        <PageHeader title="Articles" />
         <ArticleList />
       </div>
     </ArticlesProvider>

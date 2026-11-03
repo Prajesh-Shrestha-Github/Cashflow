@@ -148,7 +148,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
               </div>
               <div>
                 <div className="text-sm font-medium">{user.username || user.email}</div>
-                <div className="text-xs text-paper/60">{isAdmin ? 'Administrator' : 'User'}</div>
+                <div className="text-sm text-paper/60">{isAdmin ? 'Administrator' : 'User'}</div>
               </div>
             </div>
           </div>

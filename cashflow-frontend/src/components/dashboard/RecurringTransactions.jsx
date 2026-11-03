@@ -106,7 +106,7 @@ const RecurringTransactions = () => {
                 <p className="text-ink-mute font-semibold mt-1">
                   ${parseFloat(reminder.transaction.amount).toFixed(2)}
                 </p>
-                <p className="text-xs text-ink-mute mt-1">
+                <p className="text-sm text-ink-mute mt-1">
                   {reminder.transaction.frequency && (
                     <span className="capitalize">{reminder.transaction.frequency}</span>
                   )}
@@ -124,7 +124,7 @@ const RecurringTransactions = () => {
                   {getStatusText(reminder.days_remaining)}
                 </p>
                 {reminder.transaction.send_email_reminder && (
-                  <span className="text-xs bg-brand-tint text-brand-dark px-2 py-0.5 rounded-full mt-2 inline-block">
+                  <span className="text-sm bg-brand-tint text-brand-dark px-2 py-0.5 rounded-full mt-2 inline-block">
                     Email reminder
                   </span>
                 )}

@@ -99,16 +99,16 @@ const AdminArticleList = () => {
           <table className="min-w-full divide-y divide-line">
             <thead className="bg-paper">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-ink-mute">
                   Title
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-ink-mute">
                   Status
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-ink-mute">
                   Date
                 </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-ink-mute uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-right text-sm font-medium text-ink-mute">
                   Actions
                 </th>
               </tr>
@@ -122,7 +122,7 @@ const AdminArticleList = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    <span className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${
                       article.is_published 
                         ? 'bg-brand-tint text-brand-dark' 
                         : 'bg-accent-tint text-forest'

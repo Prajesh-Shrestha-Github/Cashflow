@@ -180,12 +180,12 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
           onChange={handleCategoryChange} 
         />
         {!formData.category && (
-          <p className="text-xs text-ink-mute mt-1">
+          <p className="text-sm text-ink-mute mt-1">
             Select a category to see available options
           </p>
         )}
         {formData.category && (
-          <p className="text-xs text-ink-mute mt-1">
+          <p className="text-sm text-ink-mute mt-1">
             {isIncomeCategory ? 'Income categories can be linked to financial goals' : 
              isExpenseCategory ? 'Expense categories can be set as recurring' : ''}
           </p>
@@ -212,7 +212,7 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
               </option>
             ))}
           </select>
-          <p className="text-xs text-ink-mute mt-1">Link this income to a financial goal</p>
+          <p className="text-sm text-ink-mute mt-1">Link this income to a financial goal</p>
         </div>
       )}
       
@@ -244,7 +244,7 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
             />
             <span className="ml-2 text-sm text-ink-soft">Recurring Transaction</span>
           </label>
-          <p className="text-xs text-ink-mute mt-1 ml-6">
+          <p className="text-sm text-ink-mute mt-1 ml-6">
             Set up recurring payments for bills, subscriptions, etc.
           </p>
         </div>
@@ -287,7 +287,7 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
               onChange={handleChange}
               className="field"
             />
-            <p className="text-xs text-ink-mute mt-1">If not set, the transaction date will be used</p>
+            <p className="text-sm text-ink-mute mt-1">If not set, the transaction date will be used</p>
           </div>
           
           <div className="mb-2">
@@ -301,7 +301,7 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
               />
               <span className="ml-2 text-sm text-ink-soft">Send email reminders</span>
             </label>
-            <p className="text-xs text-ink-mute mt-1 ml-6">
+            <p className="text-sm text-ink-mute mt-1 ml-6">
               You'll receive email reminders when this expense is due
             </p>
           </div>

@@ -8,7 +8,7 @@ const GoalsPage = () => {
 
   return (
     <div>
-      <PageHeader eyebrow="Targets" title="Financial Goals" subtitle="Track and manage your financial objectives">
+      <PageHeader title="Financial Goals">
         <button
           onClick={() => setShowForm(!showForm)}
           className={showForm ? 'btn-ghost' : 'btn-accent'}

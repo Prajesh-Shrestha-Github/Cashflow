@@ -43,13 +43,13 @@ const TransactionItem = ({ transaction, isEditing, onEdit, onEditClose }) => {
         {formatDate(transaction.date)}
       </td>
       <td className="px-4 py-3.5 whitespace-nowrap text-sm text-ink">
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${
           isIncome ? 'bg-brand-tint text-brand-dark' : 'bg-signal/10 text-signal'
         }`}>
           {transaction.category_name}
         </span>
         {transaction.is_recurring && (
-          <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-tint text-brand-dark">
+          <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-brand-tint text-brand-dark">
             Recurring
           </span>
         )}

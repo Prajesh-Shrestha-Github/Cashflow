@@ -189,7 +189,7 @@ const GoalItem = ({ goal }) => {
               </span>
               <h3 className="text-lg font-semibold text-ink">{goal.title}</h3>
             </div>
-            <div className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-brand-tint text-brand-dark">
+            <div className="text-sm font-medium px-2.5 py-0.5 rounded-full bg-brand-tint text-brand-dark">
               {goal.goal_type.replace('_', ' ')}
             </div>
           </div>
@@ -201,7 +201,7 @@ const GoalItem = ({ goal }) => {
                 style={{ width: `${goal.completion_percentage}%` }}
               ></div>
             </div>
-            <div className="flex justify-between text-xs text-ink-mute mt-1">
+            <div className="flex justify-between text-sm text-ink-mute mt-1">
               <span>{goal.completion_percentage}% complete</span>
               <span>{goal.days_remaining} days remaining</span>
             </div>
@@ -209,11 +209,11 @@ const GoalItem = ({ goal }) => {
 
           <div className="grid grid-cols-2 gap-4 my-4">
             <div className="bg-paper p-3 rounded-lg">
-              <p className="text-xs text-ink-mute">Target Amount</p>
+              <p className="text-sm text-ink-mute">Target Amount</p>
               <p className="text-lg font-bold text-ink">${parseFloat(goal.target_amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
             </div>
             <div className="bg-paper p-3 rounded-lg">
-              <p className="text-xs text-ink-mute">Current Amount</p>
+              <p className="text-sm text-ink-mute">Current Amount</p>
               <p className="text-lg font-bold text-ink">${parseFloat(goal.current_amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
             </div>
           </div>

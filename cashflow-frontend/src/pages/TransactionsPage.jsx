@@ -19,7 +19,7 @@ const TransactionsPage = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Ledger" title="Transactions" subtitle="Everything that came in and went out." />
+      <PageHeader title="Transactions" />
 
       <TransactionSummary />
 

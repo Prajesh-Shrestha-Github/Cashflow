@@ -8,7 +8,7 @@ const BookmarksPage = () => {
   return (
     <ArticlesProvider>
       <div>
-        <PageHeader eyebrow="Saved" title="My Bookmarks" subtitle="Articles you saved for later." />
+        <PageHeader title="My Bookmarks" />
         <BookmarksList />
       </div>
     </ArticlesProvider>

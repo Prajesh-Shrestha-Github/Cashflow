@@ -173,7 +173,7 @@ const AdminDashboard = () => {
         
         {showOutput && (
           <div className="mt-3 p-4 bg-paper rounded-lg overflow-auto max-h-40">
-            <pre className="text-xs whitespace-pre-wrap">{reminderOutput}</pre>
+            <pre className="text-sm whitespace-pre-wrap">{reminderOutput}</pre>
           </div>
         )}
       </div>
@@ -280,13 +280,13 @@ const AdminDashboard = () => {
           <table className="min-w-full divide-y divide-line">
             <thead className="bg-paper">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">User</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">Date Joined</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">Last Login</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">Transactions</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">User</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">Email</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">Date Joined</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">Last Login</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">Transactions</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">Status</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-card divide-y divide-line">
@@ -308,13 +308,13 @@ const AdminDashboard = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-ink-mute">{user.last_login}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-ink-mute">{user.transaction_count}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    <span className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${
                       user.is_active ? 'bg-brand-tint text-brand-dark' : 'bg-signal/10 text-signal'
                     }`}>
                       {user.is_active ? 'Active' : 'Inactive'}
                     </span>
                     {user.is_admin && (
-                      <span className="ml-1 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-accent-tint text-forest">
+                      <span className="ml-1 px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-accent-tint text-forest">
                         Admin
                       </span>
                     )}

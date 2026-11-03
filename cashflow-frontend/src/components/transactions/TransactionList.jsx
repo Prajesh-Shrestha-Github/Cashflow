@@ -31,19 +31,19 @@ const TransactionList = () => {
           <table className="min-w-full">
             <thead>
               <tr>
-                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-ink-mute">
+                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-left text-sm font-semibold text-ink-mute">
                   Date
                 </th>
-                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-ink-mute">
+                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-left text-sm font-semibold text-ink-mute">
                   Category
                 </th>
-                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-ink-mute">
+                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-left text-sm font-semibold text-ink-mute">
                   Description
                 </th>
-                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-ink-mute">
+                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-right text-sm font-semibold text-ink-mute">
                   Amount
                 </th>
-                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-ink-mute">
+                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-right text-sm font-semibold text-ink-mute">
                   Actions
                 </th>
               </tr>

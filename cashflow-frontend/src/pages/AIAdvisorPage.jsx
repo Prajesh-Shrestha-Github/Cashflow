@@ -17,7 +17,7 @@ const AIAdvisorPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <PageHeader eyebrow="Assistant" title="AI Financial Advisor" subtitle="Get personalized financial advice and recommendations. Suggestions are guidance, not financial advice." />
+          <PageHeader title="AI Financial Advisor" subtitle="Suggestions are guidance, not financial advice." />
 
           <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
             {/* Main chatbot area */}
@@ -35,19 +35,19 @@ const AIAdvisorPage = () => {
                   <h3 className="mb-3 font-display text-xl font-bold tracking-tight">What can the AI Advisor do?</h3>
                   <ul className="space-y-2 text-ink-soft">
                     <li className="flex items-start">
-                      <span className="bg-forest text-paper text-xs font-semibold rounded-full w-5 h-5 flex shrink-0 items-center justify-center mr-2.5 mt-0.5">1</span>
+                      <span className="bg-forest text-paper text-sm font-semibold rounded-full w-5 h-5 flex shrink-0 items-center justify-center mr-2.5 mt-0.5">1</span>
                       <span>Analyze your spending patterns and suggest areas to cut back</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="bg-forest text-paper text-xs font-semibold rounded-full w-5 h-5 flex shrink-0 items-center justify-center mr-2.5 mt-0.5">2</span>
+                      <span className="bg-forest text-paper text-sm font-semibold rounded-full w-5 h-5 flex shrink-0 items-center justify-center mr-2.5 mt-0.5">2</span>
                       <span>Provide personalized advice to reach your financial goals</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="bg-forest text-paper text-xs font-semibold rounded-full w-5 h-5 flex shrink-0 items-center justify-center mr-2.5 mt-0.5">3</span>
+                      <span className="bg-forest text-paper text-sm font-semibold rounded-full w-5 h-5 flex shrink-0 items-center justify-center mr-2.5 mt-0.5">3</span>
                       <span>Offer strategies to improve your financial health</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="bg-forest text-paper text-xs font-semibold rounded-full w-5 h-5 flex shrink-0 items-center justify-center mr-2.5 mt-0.5">4</span>
+                      <span className="bg-forest text-paper text-sm font-semibold rounded-full w-5 h-5 flex shrink-0 items-center justify-center mr-2.5 mt-0.5">4</span>
                       <span>Respond with variable levels of sarcasm (if you prefer)</span>
                     </li>
                   </ul>

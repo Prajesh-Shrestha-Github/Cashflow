@@ -34,10 +34,9 @@
     disabled:opacity-60; }
 
   /* Type helpers */
-  .eyebrow { @apply text-xs font-semibold uppercase tracking-[.14em] text-brand; }
   .page-title { @apply font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl; }
   .num { @apply font-mono tabular-nums; }
-  .chip { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
+  .chip { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-medium; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -38,7 +38,7 @@ const GoalList = () => {
     <div className="bg-card rounded-xl shadow-card p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-ink">Financial Goals</h2>
-        <span className="bg-brand-tint text-brand-dark text-xs font-medium px-2.5 py-0.5 rounded-full">
+        <span className="bg-brand-tint text-brand-dark text-sm font-medium px-2.5 py-0.5 rounded-full">
           {goals.length} {goals.length === 1 ? 'Goal' : 'Goals'}
         </span>
       </div>

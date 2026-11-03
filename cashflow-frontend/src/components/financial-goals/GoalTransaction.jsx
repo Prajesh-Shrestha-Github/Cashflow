@@ -57,7 +57,7 @@ const GoalTransactions = ({ goalId }) => {
     <div className="bg-paper rounded-xl p-4">
       <div className="flex items-center justify-between mb-4">
         <h4 className="text-lg font-medium text-ink-soft">Transactions</h4>
-        <span className="bg-brand-tint text-brand-dark text-xs font-medium px-2.5 py-0.5 rounded-full">
+        <span className="bg-brand-tint text-brand-dark text-sm font-medium px-2.5 py-0.5 rounded-full">
           {transactions.length} {transactions.length === 1 ? 'Transaction' : 'Transactions'}
         </span>
       </div>
@@ -75,13 +75,13 @@ const GoalTransactions = ({ goalId }) => {
           <table className="min-w-full divide-y divide-line">
             <thead className="bg-paper">
               <tr>
-                <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">
+                <th scope="col" className="px-4 py-2 text-left text-sm font-medium text-ink-mute">
                   Date
                 </th>
-                <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">
+                <th scope="col" className="px-4 py-2 text-left text-sm font-medium text-ink-mute">
                   Description
                 </th>
-                <th scope="col" className="px-4 py-2 text-right text-xs font-medium text-ink-mute uppercase tracking-wider">
+                <th scope="col" className="px-4 py-2 text-right text-sm font-medium text-ink-mute">
                   Amount
                 </th>
               </tr>

@@ -20,7 +20,7 @@ const AuthShell = ({ panelTitle, panelNote, children, footer }) => (
         {panelNote && <p className="mt-6 max-w-sm text-lg leading-relaxed text-paper/70">{panelNote}</p>}
       </div>
 
-      <p className="relative text-xs text-paper/55">Cashflow is a personal project.</p>
+      <p className="relative text-sm text-paper/55">Cashflow is a personal project.</p>
     </aside>
 
     <main className="flex items-center justify-center px-4 py-12 sm:px-8">

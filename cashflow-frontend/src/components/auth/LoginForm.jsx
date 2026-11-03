@@ -47,7 +47,6 @@ const LoginForm = () => {
   return (
     <div className="w-full">
       <h1 className="font-display text-4xl font-extrabold tracking-[-0.03em] text-ink sm:text-5xl">Sign in to your account</h1>
-      <p className="mt-3 text-base text-ink-mute">Welcome back. Enter your details to continue.</p>
 
       {error && (
         <div
@@ -66,7 +65,7 @@ const LoginForm = () => {
         </div>
       )}
 
-      <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+      <form className="mt-10 space-y-5" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="username" className="label">
             Username

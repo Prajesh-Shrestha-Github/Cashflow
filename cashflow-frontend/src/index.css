@@ -2,3 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-paper font-sans text-ink antialiased; }
+  h1, h2, h3 { @apply font-display tracking-tight; }
+  ::selection { background: #FF5C8D; color: #06241B; }
+}
+
+@layer components {
+  /* Wide layout, tight gutters */
+  .wrap { @apply mx-auto w-full max-w-wrap px-4 sm:px-6 lg:px-8; }
+
+  /* Buttons */
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold
+    transition-[background-color,box-shadow,transform] duration-150 active:translate-y-px
+    focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent
+    disabled:cursor-not-allowed disabled:opacity-60; }
+  .btn-primary { @apply btn bg-forest text-paper hover:bg-forest-deep; }
+  .btn-accent { @apply btn bg-accent text-forest-deep hover:bg-accent-dark hover:text-white; }
+  .btn-ghost { @apply btn border border-line bg-card text-ink hover:border-ink/30; }
+  .btn-danger { @apply btn bg-signal text-white hover:brightness-110; }
+
+  /* Surfaces */
+  .card { @apply rounded-2xl bg-card shadow-card; }
+  .card-pad { @apply card p-5 sm:p-6; }
+
+  /* Forms */
+  .label { @apply mb-1.5 block text-sm font-medium text-ink; }
+  .field { @apply block w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm text-ink
+    placeholder:text-ink-mute focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25
+    disabled:opacity-60; }
+
+  /* Type helpers */
+  .eyebrow { @apply text-xs font-semibold uppercase tracking-[.14em] text-brand; }
+  .page-title { @apply font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl; }
+  .num { @apply font-mono tabular-nums; }
+  .chip { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise, .animate-spin-slow { animation: none; }
+}

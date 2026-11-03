@@ -22,11 +22,11 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-paper">
       <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
       {/* Main content */}
-      <div className={`flex-1 overflow-auto ml-0 ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20'} transition-all duration-300 ease-in-out`}>
-        <div className="px-4 py-6 md:px-8 md:py-8">
+      <div className={`flex-1 overflow-auto ml-0 ${isSidebarOpen ? 'lg:ml-60' : 'lg:ml-[72px]'} transition-all duration-300 ease-in-out`}>
+        <div className="mx-auto w-full max-w-wrap px-4 pb-8 pt-16 sm:px-5 lg:px-6 lg:pt-6">
           {children}
         </div>
       </div>

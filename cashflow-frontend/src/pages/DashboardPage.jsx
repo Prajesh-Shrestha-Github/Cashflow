@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import UserDashboard from '../components/dashboard/UserDashboard';
 import { useFinancialHealth } from '../context/FinancialHealthContext';
@@ -28,7 +28,11 @@ const DashboardPage = () => {
 
   return (
     <div>
-      <PageHeader eyebrow="Overview" title="Dashboard" subtitle={`Welcome back, ${user.username || user.email}`} />
+      <PageHeader eyebrow="Overview" title="Dashboard" subtitle={`Welcome back, ${user.username || user.email}`}>
+        <Link to="/transactions" state={{ openForm: true }} className="btn-accent px-6 py-3 text-base">
+          Add transaction
+        </Link>
+      </PageHeader>
 
       {/* Main Dashboard Content - 2-column layout */}
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_400px]">

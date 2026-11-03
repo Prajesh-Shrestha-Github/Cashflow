@@ -1,5 +1,6 @@
 // src/pages/TransactionsPage.jsx
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import TransactionSummary from '../components/transactions/TransactionSummary';
 import TransactionList from '../components/transactions/TransactionList';
 import TransactionForm from '../components/transactions/TransactionForm';
@@ -7,7 +8,9 @@ import CsvImport from '../components/transactions/CsvImport';
 import PageHeader from '../components/common/PageHeader';
 
 const TransactionsPage = () => {
-  const [showAddForm, setShowAddForm] = useState(false);
+  const location = useLocation();
+  // The dashboard's "Add transaction" button links here with state.openForm
+  const [showAddForm, setShowAddForm] = useState(Boolean(location.state?.openForm));
   const [activeTab, setActiveTab] = useState('transactions');
 
   const handleAddSuccess = () => {

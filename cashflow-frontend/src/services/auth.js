@@ -35,7 +35,7 @@ export const logoutUser = async () => {
 
 export const getUserProfile = async () => {
   try {
-    const response = await api.get('/accounts/user/');
+    const response = await api.get('/accounts/me/');
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : error.message;

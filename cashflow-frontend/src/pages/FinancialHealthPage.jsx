@@ -5,6 +5,7 @@ import { useFinancialHealth } from '../context/FinancialHealthContext';
 import FinancialHealthChart from '../components/financial-health/FinancialHealthChart';
 import FinancialHealth from '../components/financial-health/FinancialHealth';
 import FinancialHealthBar from '../components/financial-health/FinancialHealthBar';
+import PageHeader from '../components/common/PageHeader';
 
 const FinancialHealthPage = () => {
   const { user } = useAuth();
@@ -23,35 +24,36 @@ const FinancialHealthPage = () => {
   }, [user, navigate, fetchCurrentHealth, fetchHistoricalHealth]);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Financial Health</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Financial Health Bar */}
-          {currentHealth && (
-            <div className="bg-white p-4 rounded-lg shadow-md">
-              <h2 className="text-lg font-semibold mb-2">Current Health</h2>
+    <div>
+      <PageHeader eyebrow="Monthly read" title="Financial Health" subtitle="How your income and spending are balancing out, month by month." />
+
+      <div className="grid gap-4 sm:gap-5 lg:grid-cols-3">
+        {/* Current status */}
+        {currentHealth && (
+          <section className="card-pad lg:col-span-1">
+            <h2 className="eyebrow">Current Health</h2>
+            <div className="mt-4">
               <FinancialHealthBar
+                hideTitle
                 healthStatus={currentHealth.health_status}
                 savingsRate={currentHealth.savings_rate}
               />
             </div>
-          )}
+          </section>
+        )}
 
-          {/* Financial Health Chart */}
-          <div className="bg-white p-4 rounded-lg shadow-md col-span-1 md:col-span-2 lg:col-span-3">
-            <h2 className="text-lg font-semibold mb-2">Health Trends</h2>
-            <FinancialHealthChart />
-          </div>
+        {/* Trend */}
+        <section className={`card-pad ${currentHealth ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
+          <h2 className="font-display text-2xl font-bold tracking-tight">Health Trends</h2>
+          <FinancialHealthChart />
+        </section>
 
-          {/* Detailed Financial Health */}
-          <div className="bg-white p-4 rounded-lg shadow-md col-span-1 md:col-span-2 lg:col-span-3">
-            <h2 className="text-lg font-semibold mb-2">Detailed Overview</h2>
-            <FinancialHealth />
-          </div>
-        </div>
-      </main>
+        {/* Detail */}
+        <section className="card-pad lg:col-span-3">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Detailed Overview</h2>
+          <FinancialHealth />
+        </section>
+      </div>
     </div>
   );
 };

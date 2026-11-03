@@ -132,14 +132,14 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
   };
   
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+    <form onSubmit={handleSubmit} className="bg-card p-6 rounded-xl shadow-card">
       <h2 className="text-2xl font-bold mb-4">
         {transaction ? 'Edit Transaction' : 'Add Transaction'}
       </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="mb-4">
-          <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="date" className="label">
             Date
           </label>
           <input
@@ -148,13 +148,13 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
             name="date"
             value={formData.date}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="field"
             required
           />
         </div>
         
         <div className="mb-4">
-          <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="amount" className="label">
             Amount
           </label>
           <input
@@ -165,14 +165,14 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
             onChange={handleChange}
             step="0.01"
             placeholder="0.00"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="field"
             required
           />
         </div>
       </div>
       
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="label">
           Category
         </label>
         <CategorySelect 
@@ -180,12 +180,12 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
           onChange={handleCategoryChange} 
         />
         {!formData.category && (
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-ink-mute mt-1">
             Select a category to see available options
           </p>
         )}
         {formData.category && (
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-ink-mute mt-1">
             {isIncomeCategory ? 'Income categories can be linked to financial goals' : 
              isExpenseCategory ? 'Expense categories can be set as recurring' : ''}
           </p>
@@ -195,7 +195,7 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
       {/* Only show financial goal selection for income categories */}
       {isIncomeCategory && (
         <div className="mb-4">
-          <label htmlFor="financial_goal" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="financial_goal" className="label">
             Financial Goal (Optional)
           </label>
           <select
@@ -203,7 +203,7 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
             name="financial_goal"
             value={formData.financial_goal}
             onChange={handleGoalChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="field"
           >
             <option value="">-- Select a Goal --</option>
             {availableGoals && availableGoals.map(goal => (
@@ -212,12 +212,12 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
               </option>
             ))}
           </select>
-          <p className="text-xs text-gray-500 mt-1">Link this income to a financial goal</p>
+          <p className="text-xs text-ink-mute mt-1">Link this income to a financial goal</p>
         </div>
       )}
       
       <div className="mb-4">
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="description" className="label">
           Description
         </label>
         <textarea
@@ -226,7 +226,7 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
           value={formData.description}
           onChange={handleChange}
           rows="3"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="field"
           placeholder="Enter transaction description"
         />
       </div>
@@ -240,11 +240,11 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
               name="is_recurring"
               checked={formData.is_recurring}
               onChange={handleChange}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              className="h-4 w-4 text-brand focus:ring-brand/40 border-line rounded"
             />
-            <span className="ml-2 text-sm text-gray-700">Recurring Transaction</span>
+            <span className="ml-2 text-sm text-ink-soft">Recurring Transaction</span>
           </label>
-          <p className="text-xs text-gray-500 mt-1 ml-6">
+          <p className="text-xs text-ink-mute mt-1 ml-6">
             Set up recurring payments for bills, subscriptions, etc.
           </p>
         </div>
@@ -252,11 +252,11 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
       
       {/* Show recurring options only if it's a recurring transaction and an expense category */}
       {formData.is_recurring && isExpenseCategory && (
-        <div className="mb-6 p-4 bg-gray-50 rounded-md border border-gray-200">
-          <h3 className="font-medium text-gray-700 mb-3">Recurring Options</h3>
+        <div className="mb-6 p-4 bg-paper rounded-lg border border-line">
+          <h3 className="font-medium text-ink-soft mb-3">Recurring Options</h3>
           
           <div className="mb-4">
-            <label htmlFor="frequency" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="frequency" className="label">
               Frequency
             </label>
             <select
@@ -264,7 +264,7 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
               name="frequency"
               value={formData.frequency}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="field"
               required={formData.is_recurring}
             >
               <option value="">-- Select Frequency --</option>
@@ -276,7 +276,7 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
           </div>
           
           <div className="mb-4">
-            <label htmlFor="next_due_date" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="next_due_date" className="label">
               Next Due Date (Optional)
             </label>
             <input
@@ -285,9 +285,9 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
               name="next_due_date"
               value={formData.next_due_date}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="field"
             />
-            <p className="text-xs text-gray-500 mt-1">If not set, the transaction date will be used</p>
+            <p className="text-xs text-ink-mute mt-1">If not set, the transaction date will be used</p>
           </div>
           
           <div className="mb-2">
@@ -297,11 +297,11 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
                 name="send_email_reminder"
                 checked={formData.send_email_reminder}
                 onChange={handleChange}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-4 w-4 text-brand focus:ring-brand/40 border-line rounded"
               />
-              <span className="ml-2 text-sm text-gray-700">Send email reminders</span>
+              <span className="ml-2 text-sm text-ink-soft">Send email reminders</span>
             </label>
-            <p className="text-xs text-gray-500 mt-1 ml-6">
+            <p className="text-xs text-ink-mute mt-1 ml-6">
               You'll receive email reminders when this expense is due
             </p>
           </div>
@@ -312,14 +312,14 @@ const TransactionForm = ({ transaction = null, onSuccess = () => {}, onCancel = 
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="btn-ghost"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+          className="btn-primary"
         >
           {loading ? 'Saving...' : transaction ? 'Update' : 'Add Transaction'}
         </button>

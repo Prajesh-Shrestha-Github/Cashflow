@@ -7,14 +7,14 @@ export const COLORS = {
   brandSoft: 'rgba(17,105,75,0.14)',
   signal: '#B8361A',
   signalSoft: 'rgba(184,54,26,0.10)',
-  accent: '#FF5C8D',
+  accent: '#FFB400',
   line: '#E4DAC4',
   mute: '#5C6C63',
   paper: '#F5EFE0',
 };
 
 // Categorical palette for slices (distinct lightness so it survives colour-blindness).
-export const CATEGORY_PALETTE = ['#0B3326', '#11694B', '#FF5C8D', '#7FB89A', '#C9B98F', '#F7A1BB', '#3A5148', '#E4DAC4'];
+export const CATEGORY_PALETTE = ['#0B3326', '#11694B', '#FFB400', '#7FB89A', '#C9B98F', '#C8702A', '#3A5148', '#E4DAC4'];
 
 export const applyChartDefaults = (ChartJS) => {
   ChartJS.defaults.font.family = '"Geist", ui-sans-serif, system-ui, sans-serif';

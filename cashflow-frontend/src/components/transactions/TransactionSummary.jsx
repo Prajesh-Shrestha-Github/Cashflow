@@ -37,7 +37,7 @@ const TransactionSummary = () => {
         <div className="relative overflow-hidden rounded-2xl bg-forest-deep p-5 text-paper">
           <div aria-hidden="true" className="absolute -right-8 -top-10 h-32 w-32 rounded-full bg-brand/40" />
           <p className="relative text-sm font-medium text-paper/70">Balance</p>
-          <p className={`relative mt-2 font-display text-3xl font-extrabold tracking-tight sm:text-4xl ${balance >= 0 ? 'text-paper' : 'text-accent'}`}>
+          <p className={`relative mt-2 font-display text-3xl font-extrabold tracking-tight sm:text-4xl ${balance >= 0 ? 'text-paper' : 'text-coral'}`}>
             {formatCurrency(balance)}
           </p>
         </div>

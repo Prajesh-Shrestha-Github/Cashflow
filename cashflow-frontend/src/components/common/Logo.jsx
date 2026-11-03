@@ -10,7 +10,7 @@ const Logo = ({ light = false, compact = false, className = '' }) => (
         strokeWidth="3.2"
         strokeLinecap="round"
       />
-      <circle cx="23.4" cy="16" r="2.5" fill="#FF5C8D" />
+      <circle cx="23.4" cy="16" r="2.5" fill="#FFB400" />
     </svg>
     {!compact && <span
       className={`font-display text-xl font-extrabold tracking-tight ${light ? 'text-paper' : 'text-ink'}`}

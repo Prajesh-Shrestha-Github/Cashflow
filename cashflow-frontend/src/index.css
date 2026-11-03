@@ -6,7 +6,7 @@
   html { -webkit-text-size-adjust: 100%; }
   body { @apply bg-paper font-sans text-ink antialiased; }
   h1, h2, h3 { @apply font-display tracking-tight; }
-  ::selection { background: #FF5C8D; color: #06241B; }
+  ::selection { background: #FFB400; color: #06241B; }
 }
 
 @layer components {
@@ -19,7 +19,7 @@
     focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent
     disabled:cursor-not-allowed disabled:opacity-60; }
   .btn-primary { @apply btn bg-forest text-paper hover:bg-forest-deep; }
-  .btn-accent { @apply btn bg-accent text-forest-deep hover:bg-accent-dark hover:text-white; }
+  .btn-accent { @apply btn bg-accent text-forest-deep hover:bg-accent-dark; }
   .btn-ghost { @apply btn border border-line bg-card text-ink hover:border-ink/30; }
   .btn-danger { @apply btn bg-signal text-white hover:brightness-110; }
 

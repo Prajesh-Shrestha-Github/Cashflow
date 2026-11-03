@@ -59,8 +59,8 @@ const GoalItem = ({ goal }) => {
   // Function to calculate appropriate color based on completion percentage
   const getProgressColor = (percentage) => {
     if (percentage < 25) return "bg-signal";
-    if (percentage < 50) return "bg-accent";
-    if (percentage < 75) return "bg-accent";
+    if (percentage < 50) return "bg-warn";
+    if (percentage < 75) return "bg-brand/60";
     return "bg-brand";
   };
 

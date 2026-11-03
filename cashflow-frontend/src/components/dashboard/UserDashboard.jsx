@@ -167,7 +167,7 @@ const UserDashboard = () => {
   };
 
   const ranges = [['week', 'Week'], ['month', 'Month'], ['year', 'Year']];
-  const changeTone = (n, goodWhenUp) => ((n > 0) === goodWhenUp ? 'text-lime-300' : 'text-accent');
+  const changeTone = (n, goodWhenUp) => ((n > 0) === goodWhenUp ? 'text-mint' : 'text-coral');
 
   return (
     <div className="space-y-4 sm:space-y-5">

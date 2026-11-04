@@ -13,7 +13,8 @@ const aiRecommendationService = {
       if (error.response && error.response.status === 429) {
         throw new Error("You've reached your daily limit of 3 AI recommendations. Please try again tomorrow!");
       }
-      throw error;
+      // Show the server's reason (e.g. the AI service is unavailable) instead of a generic message
+      throw new Error(error.response?.data?.detail || error.message);
     }
   },
 

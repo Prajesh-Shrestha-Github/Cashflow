@@ -1,5 +1,5 @@
 // src/components/common/Sidebar.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { logoutUser } from '../../services/auth';
@@ -26,21 +26,6 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const isAdmin = user?.is_admin;
   // Labels and the wide layout show on a wide screen when open, and whenever the mobile drawer is open.
   const expanded = isSidebarOpen || isMobileMenuOpen;
-
-  // Automatically collapse sidebar on small screens
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setIsSidebarOpen(false);
-      } else {
-        setIsSidebarOpen(true);
-      }
-    };
-
-    handleResize(); // Set initial state
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [setIsSidebarOpen]);
 
   const handleLogout = async () => {
     try {
@@ -108,7 +93,8 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         } bg-forest-deep text-paper`}
       >
         {/* Sidebar header */}
-        <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
+        {/* Wide: logo left, toggle right. Minimized (72px): a centered stack, so nothing spills out of the sidebar. */}
+        <div className={`flex items-center border-b border-white/10 ${expanded ? 'h-16 justify-between px-4' : 'flex-col justify-center gap-1 py-3'}`}>
           <Logo light compact={!expanded} />
           {isMobileMenuOpen && (
             <button

@@ -1,7 +1,7 @@
 // QA lab bug log: #11 (collapsed on any outside click), #14 (mobile drawer icon-only), #15 (links without
 // accessible names), #16 (menu button overlapped the logo), #17 (drawer stayed open after choosing a page).
 // Intended behaviour: the sidebar changes only via its own buttons, and automatically on narrow screens.
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -38,7 +38,10 @@ const sidebarIsOpen = () => screen.queryByText('Dashboard') !== null;
 const menu = () => screen.getByLabelText('Main menu');
 
 describe('Sidebar (wide screen)', () => {
-  beforeEach(() => setWidth(1440));
+  beforeEach(() => {
+    localStorage.clear();
+    setWidth(1440);
+  });
   afterEach(() => setWidth(1024));
 
   it('starts open', () => {
@@ -102,7 +105,10 @@ describe('Sidebar (wide screen)', () => {
 });
 
 describe('Sidebar (narrow screen drawer)', () => {
-  beforeEach(() => setWidth(500));
+  beforeEach(() => {
+    localStorage.clear();
+    setWidth(500);
+  });
   afterEach(() => setWidth(1024));
 
   it('starts closed with just a menu button', () => {
@@ -154,5 +160,74 @@ describe('Sidebar (narrow screen drawer)', () => {
   it('the collapsed drawer (closed) still gives every link an accessible name', () => {
     renderLayout();
     within(menu()).getAllByRole('link').forEach((link) => expect(link).toHaveAccessibleName());
+  });
+});
+
+// Bug #20: every page wraps itself in its own <Layout>, so the sidebar state was re-created (open) on each navigation.
+describe('Sidebar remembers the user\'s choice across pages', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    setWidth(1440);
+  });
+  afterEach(() => {
+    localStorage.clear();
+    setWidth(1024);
+  });
+
+  it('a minimized sidebar stays minimized on the next page (a new Layout is mounted)', async () => {
+    const first = renderLayout();
+    await user.click(screen.getByRole('button', { name: 'Collapse sidebar' }));
+    first.unmount();
+
+    renderLayout(); // what a route change does
+    expect(sidebarIsOpen()).toBe(false);
+  });
+
+  it('an expanded sidebar stays expanded on the next page', async () => {
+    const first = renderLayout();
+    await user.click(screen.getByRole('button', { name: 'Collapse sidebar' }));
+    await user.click(screen.getByRole('button', { name: 'Expand sidebar' }));
+    first.unmount();
+
+    renderLayout();
+    expect(sidebarIsOpen()).toBe(true);
+  });
+
+  it('a narrow screen always starts closed, whatever was chosen on a wide one', () => {
+    localStorage.setItem('sidebarOpen', 'true');
+    setWidth(500);
+    renderLayout();
+    expect(sidebarIsOpen()).toBe(false);
+  });
+
+  it('being narrow does not erase the choice: back on a wide screen it is restored', async () => {
+    renderLayout();
+    await user.click(screen.getByRole('button', { name: 'Collapse sidebar' })); // chose minimized
+
+    act(() => {
+      setWidth(500);
+      window.dispatchEvent(new Event('resize'));
+    });
+    expect(sidebarIsOpen()).toBe(false);
+
+    act(() => {
+      setWidth(1440);
+      window.dispatchEvent(new Event('resize'));
+    });
+    expect(sidebarIsOpen()).toBe(false); // still minimized: that was the user's choice
+  });
+
+  it('a first-time wide-screen user gets the open sidebar', () => {
+    renderLayout();
+    expect(sidebarIsOpen()).toBe(true);
+  });
+
+  it('survives storage being unavailable (private mode)', () => {
+    const spy = vi.spyOn(localStorage, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    renderLayout();
+    expect(sidebarIsOpen()).toBe(true);
+    spy.mockRestore();
   });
 });

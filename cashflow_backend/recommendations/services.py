@@ -1,3 +1,4 @@
+import logging
 import os
 import requests
 from dotenv import load_dotenv
@@ -10,23 +11,116 @@ from django.utils import timezone
 from django.db import transaction
 from .models import DailyRequestCounter
 
-# Load API key from environment variables
-load_dotenv()
-ROUTER_API_KEY = os.getenv("ROUTER_API_KEY")
+logger = logging.getLogger(__name__)
 
-if ROUTER_API_KEY is None:
-    raise ValueError("ROUTER_API_KEY not found. Please check your .env file.")
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+# Free models rotate on OpenRouter, so we keep a fallback chain instead of one hard-coded id.
+# Override with OPENROUTER_MODELS (comma-separated) in .env. Verified available on 2026-11-04.
+#  1. gemma-4-31b-it   : stable instruction-tuned chat model, strong multilingual (incl. Nepali), no long "thinking"
+#  2. nemotron-3-ultra : largest free model, used if Gemma is rate-limited or gone
+#  3. gemma-4-26b-a4b  : smaller Gemma
+#  4. openrouter/free  : last resort. Picks a random free model, so answers are less repeatable.
+DEFAULT_MODELS = [
+    "google/gemma-4-31b-it:free",
+    "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "google/gemma-4-26b-a4b-it:free",
+    "openrouter/free",
+]
+
+
+class AIServiceError(Exception):
+    """The AI provider could not produce an answer. `user_message` is safe to show to users."""
+
+    def __init__(self, user_message, status_code=503):
+        super().__init__(user_message)
+        self.user_message = user_message
+        self.status_code = status_code
+
+
+def get_models():
+    configured = os.getenv("OPENROUTER_MODELS", "")
+    models = [m.strip() for m in configured.split(",") if m.strip()]
+    return models or DEFAULT_MODELS
+
+
+def get_api_key():
+    """Read the key at call time (not import time) so adding it to .env does not need a restart."""
+    key = (os.getenv("ROUTER_API_KEY") or "").strip()
+    if not key:
+        load_dotenv(override=True)
+        key = (os.getenv("ROUTER_API_KEY") or "").strip()
+    return key
+
 
 class AIRecommendationService:
-    def __init__(self):
-        self.api_key = ROUTER_API_KEY
-        self.base_url = "https://openrouter.ai/api/v1/chat/completions"
-        self.headers = {
-            "Authorization": f"Bearer {self.api_key}",
+    def _headers(self, key):
+        return {
+            "Authorization": f"Bearer {key}",
             "HTTP-Referer": "http://localhost:8000",
             "X-Title": "Cashflow App (Development)",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
+
+    def _chat(self, messages):
+        """Try each model in turn. Returns (text, model_id). Raises AIServiceError."""
+        key = get_api_key()
+        if not key:
+            raise AIServiceError("The AI assistant is not configured yet (missing ROUTER_API_KEY).")
+
+        reloaded = False
+        for model in get_models():
+            try:
+                response = requests.post(
+                    OPENROUTER_URL,
+                    headers=self._headers(key),
+                    json={"model": model, "messages": messages, "temperature": 0.3, "max_tokens": 700},
+                    timeout=45,
+                )
+            except requests.RequestException as exc:
+                logger.warning("OpenRouter request failed for %s: %s", model, exc)
+                continue
+
+            if response.status_code == 200:
+                try:
+                    text = response.json()["choices"][0]["message"]["content"]
+                except (KeyError, IndexError, TypeError, ValueError):
+                    logger.warning("Unexpected response shape from %s", model)
+                    continue
+                if text and text.strip():
+                    logger.info("AI answered with model=%s date=%s", model, timezone.now().date())
+                    return text.strip(), model
+                logger.warning("Empty answer from %s", model)
+                continue
+
+            if response.status_code == 401 and not reloaded:
+                # The key may have just been changed in .env: reload once and retry this model.
+                reloaded = True
+                load_dotenv(override=True)
+                new_key = get_api_key()
+                if new_key and new_key != key:
+                    key = new_key
+                    response = requests.post(
+                        OPENROUTER_URL, headers=self._headers(key),
+                        json={"model": model, "messages": messages, "temperature": 0.3, "max_tokens": 700},
+                        timeout=45,
+                    )
+                    if response.status_code == 200:
+                        try:
+                            text = response.json()["choices"][0]["message"]["content"]
+                            if text and text.strip():
+                                return text.strip(), model
+                        except (KeyError, IndexError, TypeError, ValueError):
+                            pass
+
+            if response.status_code in (401, 403):
+                raise AIServiceError("OpenRouter rejected the API key. Check ROUTER_API_KEY in the backend .env file.")
+            if response.status_code == 402:
+                raise AIServiceError("The OpenRouter account has no credits for this model.")
+            # 404 (model removed), 429 (rate limit), 5xx, 400: try the next model
+            logger.warning("OpenRouter %s for %s: %s", response.status_code, model, response.text[:200])
+
+        raise AIServiceError("The AI service is busy or unavailable right now. Please try again in a few minutes.")
 
     def check_rate_limit(self, user):
         """
@@ -210,51 +304,28 @@ class AIRecommendationService:
             Keep responses concise (max 250 words).
             """
 
-            response = requests.post(
-                self.base_url,
-                headers=self.headers,
-                json={
-                    "model": "deepseek/deepseek-chat-v3-0324:free",
-                    "messages": [
-                        {"role": "system", "content": system_message},
-                        {"role": "user", "content": query}
-                    ]
-                }
-            )
+            text, model = self._chat([
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": query},
+            ])
 
-            if response.status_code != 200:
-                print(f"API Error: {response.status_code} - {response.text}")
-                return "Sorry, I couldn't generate a recommendation. Please try again."
-
-            # Increment the counter since we got a successful response
+            # Count the request only after a real answer
             self.increment_request_counter(user)
-            
-            response_data = response.json()
-            return response_data["choices"][0]["message"]["content"]
+            return text
 
-        except Exception as e:
-            print(f"Error generating recommendation: {e}")
-            return "Sorry, an error occurred while generating your recommendation. Please try again later."
+        except AIServiceError:
+            raise
+        except Exception:
+            logger.exception("Error generating recommendation")
+            raise AIServiceError("Something went wrong while generating your recommendation. Please try again later.")
 
     def test_api_connection(self):
-        """Test the API connection to OpenRouter"""
+        """Test the API connection to OpenRouter. Returns (ok, message)."""
         try:
-            response = requests.post(
-                self.base_url,
-                headers=self.headers,
-                json={
-                    "model": "deepseek/deepseek-chat-v3-0324:free",
-                    "messages": [
-                        {"role": "system", "content": "You are a helpful assistant."},
-                        {"role": "user", "content": "Say hello!"}
-                    ]
-                }
-            )
-
-            if response.status_code == 200:
-                return True, "API connection successful!"
-            else:
-                return False, f"API Error: {response.status_code} - {response.text}"
-
-        except Exception as e:
-            return False, f"Connection error: {str(e)}"
+            _, model = self._chat([
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": "Say hello!"},
+            ])
+            return True, f"API connection successful (model: {model})"
+        except AIServiceError as exc:
+            return False, exc.user_message

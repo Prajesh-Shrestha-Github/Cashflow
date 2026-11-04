@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import RecommendationSerializer, RecommendationRequestSerializer
 from .models import Recommendation
-from .services import AIRecommendationService
+from .services import AIRecommendationService, AIServiceError
 
 class RecommendationView(APIView):
     permission_classes = [IsAuthenticated]
@@ -25,11 +25,15 @@ class RecommendationView(APIView):
                 )
             
             # Generate recommendation
-            response_text = service.generate_recommendation(
-                user=request.user,
-                query=query,
-                sarcasm_level=sarcasm_level
-            )
+            try:
+                response_text = service.generate_recommendation(
+                    user=request.user,
+                    query=query,
+                    sarcasm_level=sarcasm_level
+                )
+            except AIServiceError as exc:
+                # Not a successful answer: do not save it to history or use up a request.
+                return Response({'detail': exc.user_message}, status=exc.status_code)
             
             # Save recommendation to database
             recommendation = Recommendation.objects.create(

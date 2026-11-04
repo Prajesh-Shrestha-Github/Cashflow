@@ -1,6 +1,7 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { useFinancialHealth } from '../../context/FinancialHealthContext';
+import { COLORS, applyChartDefaults, gridOptions } from '../../utils/chartTheme';
 
 // Import Chart.js components (required for react-chartjs-2)
 import {
@@ -24,6 +25,7 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+applyChartDefaults(ChartJS);
 
 const FinancialHealthChart = () => {
   const { historicalHealth } = useFinancialHealth();
@@ -35,8 +37,12 @@ const FinancialHealthChart = () => {
       {
         label: 'Savings Rate (%)', // Legend label
         data: historicalHealth.map(health => health.savings_rate), // Y-axis data
-        borderColor: 'rgba(75, 192, 192, 1)', // Line color
-        backgroundColor: 'rgba(75, 192, 192, 0.2)', // Fill under the line
+        borderColor: COLORS.brand, // Line color
+        pointBackgroundColor: COLORS.brand,
+        pointRadius: 4,
+        borderWidth: 2.5,
+        fill: true,
+        backgroundColor: COLORS.brandSoft, // Fill under the line
         tension: 0.4, // Smooth the line
       },
     ],
@@ -45,34 +51,22 @@ const FinancialHealthChart = () => {
   // Chart options
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       y: {
+        ...gridOptions,
         beginAtZero: true, // Start Y-axis at 0
-        title: {
-          display: true,
-          text: 'Savings Rate (%)',
-        },
+        title: { display: true, text: 'Savings Rate (%)' },
       },
-      x: {
-        title: {
-          display: true,
-          text: 'Month',
-        },
-      },
+      x: { ...gridOptions, grid: { display: false } },
     },
     plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Financial Health Over Time',
-      },
+      legend: { position: 'top', align: 'end' },
     },
   };
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md">
+    <div className="mt-4 h-72">
       <Line data={data} options={options} />
     </div>
   );

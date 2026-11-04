@@ -53,7 +53,7 @@ const TransactionFilter = () => {
     <div className="border-b px-6 py-4">
       <button
         type="button"
-        className="flex items-center text-blue-600 hover:text-blue-800 focus:outline-none"
+        className="flex items-center text-brand hover:text-brand-dark focus:outline-none"
         onClick={() => document.getElementById('filter-form').classList.toggle('hidden')}
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
@@ -64,7 +64,7 @@ const TransactionFilter = () => {
       
       <form id="filter-form" className="hidden mt-4" onSubmit={handleSubmit}>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="label">
             Search
         </label>
         <input
@@ -73,13 +73,13 @@ const TransactionFilter = () => {
             value={localFilters.search}
             onChange={handleChange}
             placeholder="Search description..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="field"
         />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="label">
               Start Date
             </label>
             <input
@@ -87,12 +87,12 @@ const TransactionFilter = () => {
               name="startDate"
               value={localFilters.startDate}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="field"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="label">
               End Date
             </label>
             <input
@@ -100,19 +100,19 @@ const TransactionFilter = () => {
               name="endDate"
               value={localFilters.endDate}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="field"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="label">
               Type
             </label>
             <select
               name="type"
               value={localFilters.type}
               onChange={handleTypeChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="field"
             >
               <option value="">All Types</option>
               <option value="income">Income</option>
@@ -121,7 +121,7 @@ const TransactionFilter = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="label">
               Category
             </label>
             <CategorySelect 
@@ -136,13 +136,13 @@ const TransactionFilter = () => {
           <button
             type="button"
             onClick={handleReset}
-            className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="btn-ghost"
           >
             Clear Filters
           </button>
           <button
             type="submit"
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="btn-primary"
           >
             Apply Filters
           </button>

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { logoutUser } from '../../services/auth';
+import Logo from './Logo';
 import { 
   FaHome, 
   FaChartLine, 
@@ -87,7 +88,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       {/* Mobile overlay */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-gray-800 bg-opacity-50 z-20 lg:hidden"
+          className="fixed inset-0 z-20 bg-forest-deep/60 lg:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         ></div>
       )}
@@ -96,7 +97,8 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       <div className="fixed top-4 left-4 z-30 lg:hidden">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 rounded-md bg-gradient-to-r from-indigo-600 to-purple-600 text-white focus:outline-none"
+          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+          className="rounded-xl bg-forest p-2.5 text-paper shadow-lift focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           {isMobileMenuOpen ? (
             <FaTimes className="w-6 h-6" />
@@ -112,18 +114,17 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         className={`fixed inset-y-0 left-0 z-20 transform ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 transition-transform duration-300 ease-in-out ${
-          isSidebarOpen ? 'w-64' : 'w-20'
-        } bg-gradient-to-b from-indigo-800 to-purple-900 text-white`}
+          isSidebarOpen ? 'w-60' : 'w-[72px]'
+        } bg-forest-deep text-paper`}
       >
         {/* Sidebar header */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-indigo-700">
-          {isSidebarOpen && (
-            <div className="text-xl font-bold tracking-wider">Cashflow</div>
-          )}
+        <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
+          <Logo light compact={!isSidebarOpen} />
           {!isMobileMenuOpen && (
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 rounded-md hover:bg-indigo-700 focus:outline-none hidden lg:block"
+              aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+              className="hidden rounded-lg p-2 text-paper/70 hover:bg-white/10 hover:text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent lg:block"
             >
               {isSidebarOpen ? (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -140,14 +141,14 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
         {/* User info */}
         {isSidebarOpen && user && (
-          <div className="px-4 py-3 border-b border-indigo-700">
+          <div className="border-b border-white/10 px-4 py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-lg font-bold">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent font-display text-lg font-extrabold text-forest-deep">
                 {user.username ? user.username.charAt(0).toUpperCase() : 'U'}
               </div>
               <div>
                 <div className="text-sm font-medium">{user.username || user.email}</div>
-                <div className="text-xs text-indigo-200">{isAdmin ? 'Administrator' : 'User'}</div>
+                <div className="text-sm text-paper/60">{isAdmin ? 'Administrator' : 'User'}</div>
               </div>
             </div>
           </div>
@@ -155,16 +156,17 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
         {/* Navigation menu */}
         <nav className="flex flex-col h-full pb-20 overflow-y-auto">
-          <div className="flex-1 px-2 py-4 space-y-1">
+          <div className="flex-1 space-y-1 px-3 py-4">
             {menuItemsToDisplay.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) => `
-                  flex items-center p-2 rounded-md transition-colors duration-200
+                  flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-150
+                  focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent
                   ${isActive 
-                    ? 'bg-indigo-700 text-white' 
-                    : 'text-indigo-100 hover:bg-indigo-700 hover:text-white'}
+                    ? 'bg-accent font-semibold text-forest-deep' 
+                    : 'text-paper/75 hover:bg-white/10 hover:text-paper'}
                   ${!isSidebarOpen && 'justify-center'}
                 `}
               >
@@ -175,11 +177,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           </div>
 
           {/* Logout button */}
-          <div className="absolute bottom-0 w-full border-t border-indigo-700 p-2">
+          <div className="absolute bottom-0 w-full border-t border-white/10 p-3">
             <button
               onClick={handleLogout}
               className={`
-                flex items-center w-full p-2 rounded-md text-indigo-100 hover:bg-indigo-700 hover:text-white transition-colors duration-200
+                flex w-full items-center rounded-xl px-3 py-2.5 text-sm font-medium text-paper/75 transition-colors duration-150 hover:bg-white/10 hover:text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent
                 ${!isSidebarOpen && 'justify-center'}
               `}
             >

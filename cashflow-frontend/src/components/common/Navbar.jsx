@@ -33,7 +33,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-blue-600 text-white shadow-md">
+    <nav className="bg-forest text-white shadow-card">
       <div className="container mx-auto px-4">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -50,10 +50,10 @@ const Navbar = () => {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition ${
+                    className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition ${
                       isActive(item.path)
-                        ? 'bg-blue-700'
-                        : 'hover:bg-blue-500'
+                        ? 'bg-forest-deep'
+                        : 'hover:bg-brand'
                     }`}
                   >
                     <span className="mr-2">{item.icon}</span>
@@ -64,10 +64,10 @@ const Navbar = () => {
                 {isAdmin && (
                   <Link
                     to="/admin-dashboard"
-                    className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition ${
+                    className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition ${
                       isActive('/admin-dashboard')
-                        ? 'bg-blue-700'
-                        : 'hover:bg-blue-500'
+                        ? 'bg-forest-deep'
+                        : 'hover:bg-brand'
                     }`}
                   >
                     Admin
@@ -76,7 +76,7 @@ const Navbar = () => {
 
                 <button
                   onClick={logout}
-                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-500 transition"
+                  className="px-3 py-2 rounded-lg text-sm font-medium hover:bg-brand transition"
                 >
                   Logout
                 </button>
@@ -86,7 +86,7 @@ const Navbar = () => {
               <div className="md:hidden flex items-center">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="inline-flex items-center justify-center p-2 rounded-md hover:bg-blue-500 focus:outline-none"
+                  className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-brand focus:outline-none"
                 >
                   <svg 
                     className="h-6 w-6" 
@@ -110,16 +110,16 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && user && (
-        <div className="md:hidden bg-blue-600 pb-3 px-4">
+        <div className="md:hidden bg-forest pb-3 px-4">
           <div className="space-y-1">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition ${
+                className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition ${
                   isActive(item.path)
-                    ? 'bg-blue-700'
-                    : 'hover:bg-blue-500'
+                    ? 'bg-forest-deep'
+                    : 'hover:bg-brand'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -132,10 +132,10 @@ const Navbar = () => {
               <>
                 <Link
                   to="/admin-dashboard"
-                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition ${
+                  className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition ${
                     isActive('/admin-dashboard')
-                      ? 'bg-blue-700'
-                      : 'hover:bg-blue-500'
+                      ? 'bg-forest-deep'
+                      : 'hover:bg-brand'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -144,7 +144,7 @@ const Navbar = () => {
 
                 <Link
                   to="/admin/articles"
-                  className="flex items-center px-3 py-2 rounded-md text-sm font-medium transition hover:bg-blue-500"
+                  className="flex items-center px-3 py-2 rounded-lg text-sm font-medium transition hover:bg-brand"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Manage Articles
@@ -157,7 +157,7 @@ const Navbar = () => {
                 logout();
                 setIsMenuOpen(false);
               }}
-              className="w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-500 transition"
+              className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium hover:bg-brand transition"
             >
               Logout
             </button>

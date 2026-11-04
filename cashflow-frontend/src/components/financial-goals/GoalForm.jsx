@@ -72,18 +72,18 @@ const GoalForm = () => {
 
   // Helper function to determine input classes
   const getInputClasses = (fieldName) => {
-    const baseClasses = "w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 transition-all";
+    const baseClasses = "w-full px-4 py-2 rounded-xl border focus:outline-none focus:ring-2 transition-all";
     return errors[fieldName] 
-      ? `${baseClasses} border-red-300 focus:border-red-500 focus:ring-red-200` 
-      : `${baseClasses} border-gray-300 focus:border-blue-500 focus:ring-blue-200`;
+      ? `${baseClasses} border-signal/30 focus:border-signal/30 focus:ring-signal/40` 
+      : `${baseClasses} border-line focus:border-brand focus:ring-brand/40`;
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Create New Financial Goal</h2>
+    <div className="bg-card rounded-xl shadow-card p-6 max-w-md mx-auto">
+      <h2 className="text-2xl font-bold text-ink mb-6 text-center">Create New Financial Goal</h2>
       
       {showSuccess && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg flex items-center">
+        <div className="mb-4 p-3 bg-brand-tint text-brand-dark rounded-xl flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
           </svg>
@@ -92,14 +92,14 @@ const GoalForm = () => {
       )}
 
       {errors.submit && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+        <div className="mb-4 p-3 bg-signal/10 text-signal rounded-xl">
           {errors.submit}
         </div>
       )}
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Goal Title</label>
+          <label className="label">Goal Title</label>
           <input
             type="text"
             placeholder="e.g., Emergency Fund, New Car"
@@ -107,11 +107,11 @@ const GoalForm = () => {
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             className={getInputClasses('title')}
           />
-          {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
+          {errors.title && <p className="mt-1 text-sm text-signal">{errors.title}</p>}
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
+          <label className="label">Description (Optional)</label>
           <textarea
             placeholder="Additional details about your goal"
             value={formData.description}
@@ -119,15 +119,15 @@ const GoalForm = () => {
             className={getInputClasses('description')}
             rows="3"
           />
-          {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+          {errors.description && <p className="mt-1 text-sm text-signal">{errors.description}</p>}
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Goal Type</label>
+          <label className="label">Goal Type</label>
           <select
             value={formData.goal_type}
             onChange={(e) => setFormData({ ...formData, goal_type: e.target.value })}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            className="w-full px-4 py-2 rounded-xl border border-line focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
           >
             <option value="savings">Savings</option>
             <option value="debt_reduction">Debt Reduction</option>
@@ -139,7 +139,7 @@ const GoalForm = () => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Target Amount ($)</label>
+          <label className="label">Target Amount ($)</label>
           <input
             type="number"
             placeholder="5000"
@@ -149,26 +149,26 @@ const GoalForm = () => {
             min="0"
             step="0.01"
           />
-          {errors.target_amount && <p className="mt-1 text-sm text-red-600">{errors.target_amount}</p>}
+          {errors.target_amount && <p className="mt-1 text-sm text-signal">{errors.target_amount}</p>}
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Target Date</label>
+          <label className="label">Target Date</label>
           <input
             type="date"
             value={formData.target_date}
             onChange={(e) => setFormData({ ...formData, target_date: e.target.value })}
             className={getInputClasses('target_date')}
           />
-          {errors.target_date && <p className="mt-1 text-sm text-red-600">{errors.target_date}</p>}
+          {errors.target_date && <p className="mt-1 text-sm text-signal">{errors.target_date}</p>}
         </div>
         
         <button 
           type="submit" 
-          className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all ${
+          className={`w-full py-3 px-4 rounded-xl text-white font-medium transition-all ${
             isSubmitting 
-              ? "bg-blue-400 cursor-not-allowed" 
-              : "bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200"
+              ? "bg-brand cursor-not-allowed" 
+              : "bg-forest hover:bg-forest-deep focus:ring-4 focus:ring-brand/40"
           }`}
           disabled={isSubmitting}
         >

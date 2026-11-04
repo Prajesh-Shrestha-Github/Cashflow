@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import UserDashboard from '../components/dashboard/UserDashboard';
 import { useFinancialHealth } from '../context/FinancialHealthContext';
 import FinancialHealthBar from '../components/financial-health/FinancialHealthBar';
 import { useTransactions } from '../context/TransactionContext';
 import RecurringTransactions from '../components/dashboard/RecurringTransactions';
+import PageHeader from '../components/common/PageHeader';
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -26,31 +27,30 @@ const DashboardPage = () => {
   if (!user) return null;
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-        <div className="text-sm text-gray-500">
-          Welcome back, <span className="font-medium">{user.username || user.email}</span>
-        </div>
-      </div>
+    <div>
+      <PageHeader title="Dashboard">
+        <Link to="/transactions" state={{ openForm: true }} className="btn-accent px-6 py-3 text-base">
+          Add transaction
+        </Link>
+      </PageHeader>
 
       {/* Main Dashboard Content - 2-column layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_400px]">
         {/* Left column - Charts and data visualization (2/3 width) */}
-        <div className="lg:col-span-2">
+        <div>
           <UserDashboard />
         </div>
         
         {/* Right column - Financial Health and Recurring Transactions (1/3 width) */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="space-y-5">
           {/* Financial Health Summary */}
           {currentHealth && (
-            <div className="bg-white rounded-lg shadow p-4 h-64 flex flex-col justify-between">
+            <div className="card-pad">
               <FinancialHealthBar 
                 healthStatus={currentHealth.health_status} 
                 savingsRate={currentHealth.savings_rate} 
               />
-              <p className="mt-3 text-sm text-gray-600">
+              <p className="mt-3 text-sm text-ink-mute">
                 {currentHealth.message || 'Maintain your financial habits to improve your score.'}
               </p>
             </div>

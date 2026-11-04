@@ -35,7 +35,7 @@ const ArticleDetail = () => {
   
   if (error) {
     return (
-      <div className="max-w-3xl mx-auto p-4 bg-red-100 text-red-700 rounded-md">
+      <div className="max-w-3xl mx-auto p-4 bg-signal/10 text-signal rounded-lg">
         {error}
       </div>
     );
@@ -50,13 +50,13 @@ const ArticleDetail = () => {
       <div className="mb-8">
         <button
           onClick={() => navigate('/articles')}
-          className="text-blue-600 hover:text-blue-800 flex items-center"
+          className="text-brand hover:text-brand-dark flex items-center"
         >
           ← Back to Articles
         </button>
       </div>
       
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="bg-card rounded-xl shadow-card overflow-hidden">
         {currentArticle.image_url && (
           <img 
             src={currentArticle.image_url} 
@@ -67,13 +67,13 @@ const ArticleDetail = () => {
         
         <div className="p-8">
           <div className="flex justify-between items-start mb-6">
-            <h1 className="text-3xl font-bold text-gray-800">
+            <h1 className="text-3xl font-bold text-ink">
               {currentArticle.title}
             </h1>
             {user && (
               <button 
                 onClick={() => toggleBookmark(currentArticle)}
-                className="text-blue-500 hover:text-blue-700 focus:outline-none"
+                className="text-brand hover:text-brand-dark focus:outline-none"
                 aria-label={currentArticle.is_bookmarked ? "Remove bookmark" : "Add bookmark"}
               >
                 {currentArticle.is_bookmarked ? (
@@ -85,7 +85,7 @@ const ArticleDetail = () => {
             )}
           </div>
           
-          <div className="text-sm text-gray-500 mb-6">
+          <div className="text-sm text-ink-mute mb-6">
             Published on {formatDate(currentArticle.created_at)}
             {currentArticle.updated_at !== currentArticle.created_at && 
               ` (Updated on ${formatDate(currentArticle.updated_at)})`}

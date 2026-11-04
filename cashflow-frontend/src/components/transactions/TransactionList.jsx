@@ -17,38 +17,38 @@ const TransactionList = () => {
   };
   
   return (
-    <div className="bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold p-6 border-b">Transactions</h2>
+    <div>
+      <h2 className="sr-only">Transaction list</h2>
       
       <TransactionFilter />
       
       <div className="overflow-x-auto">
         {loading ? (
-          <div className="p-6 text-center text-gray-500">Loading transactions...</div>
+          <div className="p-6 text-center text-ink-mute">Loading transactions...</div>
         ) : transactions.length === 0 ? (
-          <div className="p-6 text-center text-gray-500">No transactions found.</div>
+          <div className="p-6 text-center text-ink-mute">No transactions found.</div>
         ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full">
+            <thead>
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-left text-sm font-semibold text-ink-mute">
                   Date
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-left text-sm font-semibold text-ink-mute">
                   Category
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-left text-sm font-semibold text-ink-mute">
                   Description
                 </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-right text-sm font-semibold text-ink-mute">
                   Amount
                 </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="border-b border-ink/15 px-4 py-3 text-right text-sm font-semibold text-ink-mute">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-line">
               {transactions.map(transaction => (
                 <TransactionItem 
                   key={transaction.id} 

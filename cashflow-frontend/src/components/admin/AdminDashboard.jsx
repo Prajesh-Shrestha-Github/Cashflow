@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title } from 'chart.js';
-import { Pie, Line, Bar } from 'react-chartjs-2';
+import { Doughnut, Line, Bar } from 'react-chartjs-2';
+import { COLORS, CATEGORY_PALETTE, applyChartDefaults, gridOptions } from '../../utils/chartTheme';
 import { toast } from 'react-hot-toast';
 
 // Register ChartJS components
@@ -17,6 +18,7 @@ ChartJS.register(
   BarElement,
   Title
 );
+applyChartDefaults(ChartJS);
 
 const AdminDashboard = () => {
   const [adminData, setAdminData] = useState(null);
@@ -86,14 +88,14 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-red-100 text-red-700 rounded-md">
+      <div className="p-4 bg-signal/10 text-signal rounded-lg">
         {error}
       </div>
     );
@@ -106,8 +108,11 @@ const AdminDashboard = () => {
       {
         label: 'Total Users',
         data: adminData.charts.user_growth.data,
-        borderColor: 'rgba(99, 102, 241, 1)',
-        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+        borderColor: COLORS.brand,
+        backgroundColor: COLORS.brandSoft,
+        borderWidth: 2.5,
+        pointRadius: 3,
+        pointBackgroundColor: COLORS.brand,
         tension: 0.4,
         fill: true,
       }
@@ -120,9 +125,10 @@ const AdminDashboard = () => {
       {
         label: 'Transaction Volume',
         data: adminData.charts.transaction_volume.data,
-        backgroundColor: 'rgba(59, 130, 246, 0.6)',
-        borderColor: 'rgba(59, 130, 246, 1)',
-        borderWidth: 1,
+        backgroundColor: COLORS.forest,
+        borderRadius: 8,
+        borderSkipped: false,
+        maxBarThickness: 36,
       }
     ]
   };
@@ -133,36 +139,24 @@ const AdminDashboard = () => {
       {
         label: 'Expense by Category',
         data: adminData.charts.category_distribution.data,
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.6)',
-          'rgba(54, 162, 235, 0.6)',
-          'rgba(255, 206, 86, 0.6)',
-          'rgba(75, 192, 192, 0.6)',
-          'rgba(153, 102, 255, 0.6)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-        ],
-        borderWidth: 1,
+        backgroundColor: CATEGORY_PALETTE,
+        borderColor: COLORS.paper,
+        borderWidth: 3,
       },
     ],
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 px-4 sm:px-6 lg:px-8">
+    <div className="space-y-6">
       {/* Admin Actions */}
-      <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
+      <div className="bg-card p-6 rounded-xl shadow-card overflow-x-auto">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
           <h2 className="text-xl font-semibold">Admin Dashboard</h2>
           <div className="mt-3 md:mt-0 space-y-2 md:space-y-0 md:space-x-2">
             <button 
               onClick={handleSendReminders} 
               disabled={sendingReminders}
-              className="w-full md:w-auto px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-indigo-300 flex items-center justify-center"
+              className="btn-primary md:w-auto"
             >
               {sendingReminders ? (
                 <>
@@ -178,29 +172,29 @@ const AdminDashboard = () => {
         </div>
         
         {showOutput && (
-          <div className="mt-3 p-4 bg-gray-100 rounded-md overflow-auto max-h-40">
-            <pre className="text-xs whitespace-pre-wrap">{reminderOutput}</pre>
+          <div className="mt-3 p-4 bg-paper rounded-lg overflow-auto max-h-40">
+            <pre className="text-sm whitespace-pre-wrap">{reminderOutput}</pre>
           </div>
         )}
       </div>
       
       {/* Summary Cards */}
-      <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
+      <div className="bg-card p-6 rounded-xl shadow-card overflow-x-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-purple-50 p-4 rounded-md">
-            <h3 className="text-sm font-medium text-purple-500">Total Users</h3>
+          <div className="bg-accent-tint p-4 rounded-lg">
+            <h3 className="text-sm font-medium text-forest">Total Users</h3>
             <p className="text-2xl font-bold">{adminData.user_stats.total_users.toLocaleString()}</p>
-            <p className="text-sm text-gray-500">{adminData.user_stats.active_users} active</p>
+            <p className="text-sm text-ink-mute">{adminData.user_stats.active_users} active</p>
           </div>
           
-          <div className="bg-blue-50 p-4 rounded-md">
-            <h3 className="text-sm font-medium text-blue-500">Transactions</h3>
+          <div className="bg-brand-tint p-4 rounded-lg">
+            <h3 className="text-sm font-medium text-brand">Transactions</h3>
             <p className="text-2xl font-bold">{adminData.transaction_stats.total_transactions.toLocaleString()}</p>
-            <p className="text-sm text-gray-500">Avg: ${adminData.transaction_stats.average_transaction.toFixed(2)}</p>
+            <p className="text-sm text-ink-mute">Avg: ${adminData.transaction_stats.average_transaction.toFixed(2)}</p>
           </div>
           
-          <div className="bg-green-50 p-4 rounded-md">
-            <h3 className="text-sm font-medium text-green-500">Platform Balance</h3>
+          <div className="bg-brand-tint p-4 rounded-lg">
+            <h3 className="text-sm font-medium text-brand">Platform Balance</h3>
             <p className="text-2xl font-bold">${adminData.transaction_stats.total_platform_balance.toLocaleString()}</p>
           </div>
         </div>
@@ -209,15 +203,17 @@ const AdminDashboard = () => {
       {/* Charts Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* User Growth Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
-          <h2 className="text-xl font-semibold mb-4">User Growth</h2>
+        <div className="bg-card p-6 rounded-xl shadow-card overflow-x-auto">
+          <h2 className="mb-4 font-display text-xl font-bold tracking-tight">User Growth</h2>
           <div className="h-48 sm:h-64 md:h-80">
             <Line 
               data={userGrowthData} 
               options={{ 
                 maintainAspectRatio: false,
                 scales: {
+                  x: { ...gridOptions, grid: { display: false } },
                   y: {
+                    ...gridOptions,
                     beginAtZero: true,
                     ticks: {
                       precision: 0
@@ -230,15 +226,17 @@ const AdminDashboard = () => {
         </div>
         
         {/* Transaction Volume Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
-          <h2 className="text-xl font-semibold mb-4">Transaction Volume</h2>
+        <div className="bg-card p-6 rounded-xl shadow-card overflow-x-auto">
+          <h2 className="mb-4 font-display text-xl font-bold tracking-tight">Transaction Volume</h2>
           <div className="h-48 sm:h-64 md:h-80">
             <Bar 
               data={transactionVolumeData} 
               options={{ 
                 maintainAspectRatio: false,
                 scales: {
+                  x: { ...gridOptions, grid: { display: false } },
                   y: {
+                    ...gridOptions,
                     beginAtZero: true,
                     ticks: {
                       precision: 0
@@ -251,81 +249,81 @@ const AdminDashboard = () => {
         </div>
         
         {/* Category Distribution Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
-          <h2 className="text-xl font-semibold mb-4">Top Expense Categories</h2>
+        <div className="bg-card p-6 rounded-xl shadow-card overflow-x-auto">
+          <h2 className="mb-4 font-display text-xl font-bold tracking-tight">Top Expense Categories</h2>
           <div className="h-48 sm:h-64 md:h-80">
-            <Pie data={categoryDistributionData} options={{ maintainAspectRatio: false }} />
+            <Doughnut data={categoryDistributionData} options={{ maintainAspectRatio: false, cutout: '66%', plugins: { legend: { position: 'bottom' } } }} />
           </div>
         </div>
         
         {/* New Users This Month */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">New Users This Month</h2>
+        <div className="bg-card p-6 rounded-xl shadow-card">
+          <h2 className="mb-4 font-display text-xl font-bold tracking-tight">New Users This Month</h2>
           <div className="flex items-center space-x-4">
-            <div className="bg-indigo-100 p-3 rounded-full">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="bg-brand-tint p-3 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
             </div>
             <div>
               <p className="text-2xl font-bold">{adminData.user_stats.new_users_this_month}</p>
-              <p className="text-sm text-gray-500">New users</p>
+              <p className="text-sm text-ink-mute">New users</p>
             </div>
           </div>
         </div>
       </div>
       
       {/* Users Table */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Users</h2>
-        <div className="overflow-x-auto sm:rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+      <div className="bg-card p-6 rounded-xl shadow-card">
+        <h2 className="mb-4 font-display text-xl font-bold tracking-tight">Users</h2>
+        <div className="overflow-x-auto sm:rounded-xl">
+          <table className="min-w-full divide-y divide-line">
+            <thead className="bg-paper">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Joined</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transactions</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">User</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">Email</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">Date Joined</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">Last Login</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">Transactions</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">Status</th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-ink-mute">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-card divide-y divide-line">
               {adminData.users.map((user) => (
                 <tr key={user.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                        <span className="text-indigo-600 font-medium">{user.username.substring(0, 2).toUpperCase()}</span>
+                      <div className="flex-shrink-0 h-10 w-10 bg-brand-tint rounded-full flex items-center justify-center">
+                        <span className="text-brand font-medium">{user.username.substring(0, 2).toUpperCase()}</span>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name || user.username}</div>
-                        <div className="text-sm text-gray-500">@{user.username}</div>
+                        <div className="text-sm font-medium text-ink">{user.name || user.username}</div>
+                        <div className="text-sm text-ink-mute">@{user.username}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.date_joined}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.last_login}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.transaction_count}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-ink-mute">{user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-ink-mute">{user.date_joined}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-ink-mute">{user.last_login}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-ink-mute">{user.transaction_count}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    <span className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${
+                      user.is_active ? 'bg-brand-tint text-brand-dark' : 'bg-signal/10 text-signal'
                     }`}>
                       {user.is_active ? 'Active' : 'Inactive'}
                     </span>
                     {user.is_admin && (
-                      <span className="ml-1 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                      <span className="ml-1 px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-accent-tint text-forest">
                         Admin
                       </span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-ink-mute">
                     {!user.is_admin && (
                       <button 
                         onClick={() => handleDeleteUser(user.id, user.username)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-signal hover:text-signal"
                       >
                         Delete
                       </button>

@@ -22,28 +22,28 @@ const BookmarksList = () => {
   
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Your Bookmarked Articles</h2>
+      <h2 className="text-2xl font-semibold text-ink mb-4">Your Bookmarked Articles</h2>
       
       {bookmarks.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-gray-500">You haven't bookmarked any articles yet.</p>
+          <p className="text-ink-mute">You haven't bookmarked any articles yet.</p>
           <Link 
             to="/articles" 
-            className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="btn-primary mt-4"
           >
             Browse Articles
           </Link>
         </div>
       ) : (
-        <ul className="divide-y divide-gray-200">
+        <ul className="divide-y divide-line">
           {bookmarks.map((bookmark) => (
             <li key={bookmark.id} className="py-4">
               <Link 
                 to={`/articles/${bookmark.article}`} 
-                className="flex justify-between items-center hover:bg-gray-50 p-2 rounded"
+                className="flex justify-between items-center hover:bg-paper p-2 rounded"
               >
-                <span className="font-medium text-gray-800">{bookmark.article_title}</span>
-                <span className="text-sm text-gray-500">
+                <span className="font-medium text-ink">{bookmark.article_title}</span>
+                <span className="text-sm text-ink-mute">
                   Bookmarked on {formatDate(bookmark.created_at)}
                 </span>
               </Link>

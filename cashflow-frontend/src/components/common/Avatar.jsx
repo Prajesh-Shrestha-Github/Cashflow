@@ -12,7 +12,7 @@ const Avatar = ({ type, size = 'md' }) => {
   
   return (
     <div className={`${sizeClass} rounded-full flex items-center justify-center ${
-      type === 'ai' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-600'
+      type === 'ai' ? 'bg-brand-tint text-brand' : 'bg-paper text-ink-mute'
     }`}>
       {type === 'ai' ? <FaRobot /> : <FaUser />}
     </div>

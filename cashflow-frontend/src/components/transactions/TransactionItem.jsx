@@ -24,7 +24,7 @@ const TransactionItem = ({ transaction, isEditing, onEdit, onEditClose }) => {
   if (isEditing) {
     return (
       <tr>
-        <td colSpan="5" className="px-6 py-4">
+        <td colSpan="5" className="px-4 py-3.5">
           <TransactionForm 
             transaction={transaction} 
             onSuccess={onEditClose} 
@@ -38,45 +38,45 @@ const TransactionItem = ({ transaction, isEditing, onEdit, onEditClose }) => {
   const isIncome = transaction.category_type === 'income';
   
   return (
-    <tr className="hover:bg-gray-50">
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+    <tr className="transition-colors hover:bg-paper">
+      <td className="px-4 py-3.5 whitespace-nowrap text-sm text-ink">
         {formatDate(transaction.date)}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          isIncome ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+      <td className="px-4 py-3.5 whitespace-nowrap text-sm text-ink">
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${
+          isIncome ? 'bg-brand-tint text-brand-dark' : 'bg-signal/10 text-signal'
         }`}>
           {transaction.category_name}
         </span>
         {transaction.is_recurring && (
-          <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-brand-tint text-brand-dark">
             Recurring
           </span>
         )}
       </td>
-      <td className="px-6 py-4 text-sm text-gray-900">
+      <td className="px-4 py-3.5 text-sm text-ink">
         <div className="max-w-xs truncate">
           {transaction.description || '—'}
         </div>
       </td>
-      <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium text-right ${
-        isIncome ? 'text-green-600' : 'text-red-600'
+      <td className={`px-4 py-3.5 whitespace-nowrap font-mono text-sm font-semibold tabular-nums text-right ${
+        isIncome ? 'text-brand' : 'text-signal'
       }`}>
         {isIncome ? '+ ' : '- '}
         {formatCurrency(Math.abs(transaction.amount))}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+      <td className="px-4 py-3.5 whitespace-nowrap text-right text-sm font-medium">
         {showConfirmDelete ? (
           <div className="flex justify-end space-x-2">
             <button
               onClick={handleCancelDelete}
-              className="text-gray-600 hover:text-gray-900"
+              className="text-ink-mute hover:text-ink"
             >
               Cancel
             </button>
             <button
               onClick={handleConfirmDelete}
-              className="text-red-600 hover:text-red-900"
+              className="text-signal hover:text-signal"
             >
               Confirm
             </button>
@@ -85,13 +85,13 @@ const TransactionItem = ({ transaction, isEditing, onEdit, onEditClose }) => {
           <div className="flex justify-end space-x-3">
             <button
               onClick={onEdit}
-              className="text-blue-600 hover:text-blue-900"
+              className="text-brand hover:text-brand-dark"
             >
               Edit
             </button>
             <button
               onClick={handleDeleteClick}
-              className="text-red-600 hover:text-red-900"
+              className="text-signal hover:text-signal"
             >
               Delete
             </button>

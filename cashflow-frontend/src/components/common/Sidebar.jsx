@@ -1,5 +1,5 @@
 // src/components/common/Sidebar.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { logoutUser } from '../../services/auth';
@@ -24,7 +24,8 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isAdmin = user?.is_admin;
-  const sidebarRef = useRef(null);
+  // Labels and the wide layout show on a wide screen when open, and whenever the mobile drawer is open.
+  const expanded = isSidebarOpen || isMobileMenuOpen;
 
   // Automatically collapse sidebar on small screens
   useEffect(() => {
@@ -40,17 +41,6 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [setIsSidebarOpen]);
-
-  // Close sidebar when clicking outside on desktop
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (isSidebarOpen && !isMobileMenuOpen && sidebarRef.current && !sidebarRef.current.contains(e.target)) {
-        setIsSidebarOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isSidebarOpen, isMobileMenuOpen, setIsSidebarOpen]);
 
   const handleLogout = async () => {
     try {
@@ -88,42 +78,53 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       {/* Mobile overlay */}
       {isMobileMenuOpen && (
         <div 
+          data-testid="menu-overlay"
           className="fixed inset-0 z-20 bg-forest-deep/60 lg:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         ></div>
       )}
 
-      {/* Mobile menu toggle button */}
-      <div className="fixed top-4 left-4 z-30 lg:hidden">
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-          className="rounded-xl bg-forest p-2.5 text-paper shadow-lift focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          {isMobileMenuOpen ? (
-            <FaTimes className="w-6 h-6" />
-          ) : (
+      {/* Mobile menu button: only while the drawer is closed (the close button lives inside the drawer) */}
+      {!isMobileMenuOpen && (
+        <div className="fixed top-4 left-4 z-30 lg:hidden">
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Open menu"
+            aria-expanded="false"
+            className="rounded-xl bg-forest p-2.5 text-paper shadow-lift focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
             <FaBars className="w-6 h-6" />
-          )}
-        </button>
-      </div>
+          </button>
+        </div>
+      )}
 
       {/* Sidebar container */}
-      <div
-        ref={sidebarRef}
+      <aside
+        aria-label="Main menu"
         className={`fixed inset-y-0 left-0 z-20 transform ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 transition-transform duration-300 ease-in-out ${
-          isSidebarOpen ? 'w-60' : 'w-[72px]'
+          expanded ? 'w-60' : 'w-[72px]'
         } bg-forest-deep text-paper`}
       >
         {/* Sidebar header */}
         <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
-          <Logo light compact={!isSidebarOpen} />
+          <Logo light compact={!expanded} />
+          {isMobileMenuOpen && (
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-label="Close menu"
+              aria-expanded="true"
+              className="rounded-lg p-2 text-paper/80 hover:bg-white/10 hover:text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent lg:hidden"
+            >
+              <FaTimes className="h-6 w-6" />
+            </button>
+          )}
           {!isMobileMenuOpen && (
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+              aria-expanded={isSidebarOpen}
               className="hidden rounded-lg p-2 text-paper/70 hover:bg-white/10 hover:text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent lg:block"
             >
               {isSidebarOpen ? (
@@ -140,7 +141,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         </div>
 
         {/* User info */}
-        {isSidebarOpen && user && (
+        {expanded && user && (
           <div className="border-b border-white/10 px-4 py-4">
             <div className="flex items-center space-x-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent font-display text-lg font-extrabold text-forest-deep">
@@ -161,17 +162,20 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-label={expanded ? undefined : item.label}
+                title={expanded ? undefined : item.label}
                 className={({ isActive }) => `
                   flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-150
                   focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent
                   ${isActive 
                     ? 'bg-accent font-semibold text-forest-deep' 
                     : 'text-paper/75 hover:bg-white/10 hover:text-paper'}
-                  ${!isSidebarOpen && 'justify-center'}
+                  ${!expanded && 'justify-center'}
                 `}
               >
                 <span className="flex-shrink-0">{item.icon}</span>
-                {isSidebarOpen && <span className="ml-3">{item.label}</span>}
+                {expanded && <span className="ml-3">{item.label}</span>}
               </NavLink>
             ))}
           </div>
@@ -180,17 +184,19 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           <div className="absolute bottom-0 w-full border-t border-white/10 p-3">
             <button
               onClick={handleLogout}
+              aria-label={expanded ? undefined : 'Logout'}
+              title={expanded ? undefined : 'Logout'}
               className={`
                 flex w-full items-center rounded-xl px-3 py-2.5 text-sm font-medium text-paper/75 transition-colors duration-150 hover:bg-white/10 hover:text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent
-                ${!isSidebarOpen && 'justify-center'}
+                ${!expanded && 'justify-center'}
               `}
             >
               <FaSignOutAlt className="w-5 h-5" />
-              {isSidebarOpen && <span className="ml-3">Logout</span>}
+              {expanded && <span className="ml-3">Logout</span>}
             </button>
           </div>
         </nav>
-      </div>
+      </aside>
     </>
   );
 };

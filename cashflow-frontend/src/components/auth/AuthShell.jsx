@@ -42,7 +42,7 @@ export const FormHeading = ({ title, subtitle }) => (
   </>
 );
 
-export const Notice = ({ tone = 'error', id, children }) => {
+export const Notice = ({ tone = 'error', id, className = 'mt-6', children }) => {
   const tones = {
     error: 'border-signal/25 bg-signal/5 text-signal',
     success: 'border-brand/25 bg-brand-tint text-brand-dark',
@@ -51,7 +51,7 @@ export const Notice = ({ tone = 'error', id, children }) => {
     <div
       id={id}
       role={tone === 'error' ? 'alert' : 'status'}
-      className={`mt-6 rounded-xl border p-3.5 text-sm font-medium ${tones[tone]}`}
+      className={`${className} rounded-xl border p-3.5 text-sm font-medium ${tones[tone]}`}
     >
       {children}
     </div>

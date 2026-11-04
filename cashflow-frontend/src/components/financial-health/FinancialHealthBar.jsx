@@ -13,7 +13,7 @@ const FinancialHealthBar = ({ healthStatus, savingsRate, hideTitle = false }) =>
   const status = statusStyles[healthStatus] || statusStyles.critical;
 
   return (
-    <div className="w-full h-full flex flex-col justify-between">
+    <div className="flex w-full flex-col gap-2">
       {!hideTitle && <h3 className="mb-3 font-display text-2xl font-bold tracking-tight">Financial Health</h3>}
       <div className="relative h-4 w-full overflow-hidden rounded-full bg-paper">
         <div

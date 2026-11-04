@@ -19,7 +19,7 @@ const LoginPage = () => {
         </p>
       }
     >
-      {message && <Notice tone="success">{message}</Notice>}
+      {message && <Notice tone="success" className="mb-8">{message}</Notice>}
       <LoginForm />
     </AuthShell>
   );

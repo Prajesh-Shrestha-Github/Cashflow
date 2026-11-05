@@ -20,8 +20,14 @@ import sys
 
 # Import transaction model
 from transactions.models import Transaction
+from moneyscore.service import indian_grouping
 
 User = get_user_model()
+
+def _npr(amount):
+    """Words for people: NPR with lakh grouping (the amounts are floats today, bug #13, so go through str)."""
+    return f"NPR {indian_grouping(Decimal(str(amount)))}"
+
 
 class DashboardView(APIView):
     def get(self, request):
@@ -33,7 +39,7 @@ class DashboardView(APIView):
         period = request.query_params.get('period', 'month')
         
         # Set date ranges based on period
-        today = timezone.now().date()
+        today = timezone.localdate()
         
         if period == 'week':
             start_date = today - timedelta(days=today.weekday())
@@ -246,7 +252,7 @@ class DashboardView(APIView):
             highest_category = category_breakdown[0]
             insights.append({
                 'title': f'Top Spending Category: {highest_category["category"]}',
-                'description': f'Your highest spending is in {highest_category["category"]} at ${highest_category["amount"]:.2f} this {period}.'
+                'description': f'Your highest spending is in {highest_category["category"]} at {_npr(highest_category["amount"])} this {period}.'
             })
         
         # Insight 2: Day of week spending pattern
@@ -255,7 +261,7 @@ class DashboardView(APIView):
             if top_day['average_amount'] > 0:
                 insights.append({
                     'title': f'Spending Peak: {top_day["day_of_week"]}',
-                    'description': f'You tend to spend more on {top_day["day_of_week"]}days, averaging ${top_day["average_amount"]:.2f}.'
+                    'description': f'You tend to spend more on {top_day["day_of_week"]}days, averaging {_npr(top_day["average_amount"])}.'
                 })
         
         # Insight 3: Savings rate
@@ -327,7 +333,7 @@ class AdminDashboardView(APIView):
                            status=status.HTTP_403_FORBIDDEN)
         
         # Current date and past dates for historical data
-        today = timezone.now().date()
+        today = timezone.localdate()
         last_month = today - timedelta(days=30)
         last_year = today - timedelta(days=365)
         

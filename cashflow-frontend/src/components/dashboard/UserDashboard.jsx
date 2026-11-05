@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title } from 'chart.js';
 import { Doughnut, Line, Bar } from 'react-chartjs-2';
 import { COLORS, CATEGORY_PALETTE, applyChartDefaults, gridOptions } from '../../utils/chartTheme';
+import { formatNPR } from '../../utils/formatMoney';
 
 // Register ChartJS components
 ChartJS.register(
@@ -23,7 +23,6 @@ const UserDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { user } = useAuth();
   const [timeRange, setTimeRange] = useState('month'); // 'week', 'month', 'year'
 
   useEffect(() => {
@@ -167,31 +166,24 @@ const UserDashboard = () => {
   };
 
   const ranges = [['week', 'Week'], ['month', 'Month'], ['year', 'Year']];
-  const changeTone = (n, goodWhenUp) => ((n > 0) === goodWhenUp ? 'text-mint' : 'text-coral');
+  const changeTone = (n, goodWhenUp) => ((n > 0) === goodWhenUp ? 'text-brand' : 'text-signal');
+  const npr = (n) => formatNPR(String(n)); // the API sends numbers today (bug #13); format them as NPR
 
   return (
     <div className="space-y-4 sm:space-y-5">
-      {/* Hero balance */}
-      <section className="relative overflow-hidden rounded-3xl bg-forest-deep p-6 text-paper sm:p-8">
-        <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 h-72 w-72 rounded-full bg-brand/40" />
-        <div aria-hidden="true" className="pointer-events-none absolute -bottom-10 right-24 h-24 w-24 rounded-full bg-accent" />
-
-        <div className="relative flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold tracking-[.14em] text-paper/60">
-              Balance this {timeRange}
-            </p>
-            <h2 className="sr-only">Welcome, {user.first_name || user.username}!</h2>
-          </div>
-          <div role="group" aria-label="Time range" className="flex rounded-xl bg-white/10 p-1">
+      {/* Money in and out for the chosen period (the main balance is the hero above, not a period figure) */}
+      <section aria-label="Money in and out" className="card-pad">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Money in and out</h2>
+          <div role="group" aria-label="Time range" className="flex rounded-xl bg-paper p-1">
             {ranges.map(([key, label]) => (
               <button
                 key={key}
                 type="button"
                 onClick={() => setTimeRange(key)}
                 aria-pressed={timeRange === key}
-                className={`rounded-lg px-4 py-1.5 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
-                  timeRange === key ? 'bg-accent text-forest-deep' : 'text-paper/70 hover:text-paper'
+                className={`rounded-lg px-4 py-1.5 text-base font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
+                  timeRange === key ? 'bg-forest text-paper' : 'text-ink-mute hover:text-ink'
                 }`}
               >
                 {label}
@@ -200,32 +192,29 @@ const UserDashboard = () => {
           </div>
         </div>
 
-        <p className="relative mt-4 font-display text-6xl font-extrabold leading-none tracking-[-0.04em] sm:text-8xl">
-          ${stats.balance.toLocaleString()}
-        </p>
-
-        <dl className="relative mt-8 grid gap-6 border-t border-white/15 pt-6 sm:grid-cols-3">
-          <div>
-            <dt className="text-sm text-paper/60">Total Income</dt>
-            <dd className="mt-1 font-display text-3xl font-bold tracking-tight">${stats.total_income.toLocaleString()}</dd>
+        <dl className="mt-5 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl bg-brand-tint p-4">
+            <dt className="text-base text-brand-dark">Money in</dt>
+            <dd className="mt-1 font-display text-3xl font-bold tracking-tight text-brand-dark">{npr(stats.total_income)}</dd>
             {stats.income_change !== 0 && (
-              <p className={`mt-1 text-sm ${changeTone(stats.income_change, true)}`}>
+              <p className={`mt-1 text-base ${changeTone(stats.income_change, true)}`}>
                 {stats.income_change > 0 ? '↑' : '↓'} {Math.abs(stats.income_change)}% from previous {timeRange}
               </p>
             )}
           </div>
-          <div>
-            <dt className="text-sm text-paper/60">Total Expenses</dt>
-            <dd className="mt-1 font-display text-3xl font-bold tracking-tight">${stats.total_expense.toLocaleString()}</dd>
+          <div className="rounded-2xl bg-signal/10 p-4">
+            <dt className="text-base text-signal">Money out</dt>
+            <dd className="mt-1 font-display text-3xl font-bold tracking-tight text-signal">{npr(stats.total_expense)}</dd>
             {stats.expense_change !== 0 && (
-              <p className={`mt-1 text-sm ${changeTone(stats.expense_change, false)}`}>
+              <p className={`mt-1 text-base ${changeTone(stats.expense_change, false)}`}>
                 {stats.expense_change > 0 ? '↑' : '↓'} {Math.abs(stats.expense_change)}% from previous {timeRange}
               </p>
             )}
           </div>
-          <div>
-            <dt className="text-sm text-paper/60">Savings Rate</dt>
+          <div className="rounded-2xl bg-paper p-4">
+            <dt className="text-base text-ink-soft">Saved</dt>
             <dd className="mt-1 font-display text-3xl font-bold tracking-tight">{stats.savings_rate}%</dd>
+            <p className="mt-1 text-base text-ink-mute">of your income</p>
           </div>
         </dl>
       </section>
@@ -242,14 +231,14 @@ const UserDashboard = () => {
                 interaction: { mode: 'index', intersect: false },
                 scales: {
                   x: { ...gridOptions, grid: { display: false } },
-                  y: { ...gridOptions, beginAtZero: true, ticks: { callback: value => `$${value}` } },
+                  y: { ...gridOptions, beginAtZero: true, ticks: { callback: value => `NPR ${Number(value).toLocaleString('en-IN')}` } },
                 },
                 plugins: {
                   legend: { position: 'top', align: 'end' },
                   tooltip: {
                     callbacks: {
                       label: function(context) {
-                        return `${context.dataset.label}: $${context.raw.toLocaleString()}`;
+                        return `${context.dataset.label}: ${npr(context.raw)}`;
                       }
                     }
                   }
@@ -278,14 +267,14 @@ const UserDashboard = () => {
                 maintainAspectRatio: false,
                 scales: {
                   x: { ...gridOptions, grid: { display: false } },
-                  y: { ...gridOptions, beginAtZero: true, ticks: { callback: value => `$${value}` } },
+                  y: { ...gridOptions, beginAtZero: true, ticks: { callback: value => `NPR ${Number(value).toLocaleString('en-IN')}` } },
                 },
                 plugins: {
                   legend: { display: false },
                   tooltip: {
                     callbacks: {
                       label: function(context) {
-                        return `Average Spending: $${context.raw.toLocaleString()}`;
+                        return `Average Spending: ${npr(context.raw)}`;
                       }
                     }
                   }
@@ -336,7 +325,7 @@ const UserDashboard = () => {
                     </span>
                   </td>
                   <td className={`whitespace-nowrap py-3.5 text-right font-mono text-sm font-semibold tabular-nums ${transaction.type === 'income' ? 'text-brand' : 'text-signal'}`}>
-                    ${transaction.amount.toLocaleString()}
+                    {npr(transaction.amount)}
                   </td>
                 </tr>
               ))}

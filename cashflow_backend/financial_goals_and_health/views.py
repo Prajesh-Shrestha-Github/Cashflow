@@ -68,7 +68,7 @@ class FinancialHealthViewSet(viewsets.ModelViewSet):
                 return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, 
                                status=status.HTTP_400_BAD_REQUEST)
         else:
-            today = timezone.now().date()
+            today = timezone.localdate()
             month_start = datetime.date(today.year, today.month, 1)
         
         # Get next month's first day for date range
@@ -109,7 +109,7 @@ class FinancialHealthViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def current(self, request):
-        today = timezone.now().date()
+        today = timezone.localdate()
         month_start = datetime.date(today.year, today.month, 1)
         
         health, _ = FinancialHealth.objects.get_or_create(

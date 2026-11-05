@@ -51,7 +51,7 @@ class FinancialGoal(models.Model):
     def days_remaining(self):
         if self.status == 'completed':
             return 0
-        today = timezone.now().date()
+        today = timezone.localdate()
         if today > self.target_date:
             return 0
         return (self.target_date - today).days

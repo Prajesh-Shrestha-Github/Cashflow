@@ -33,7 +33,7 @@ class AIRecommendationService:
         Check if user has exceeded their daily limit of 3 requests
         Returns (bool, int): (has_remaining_requests, requests_remaining)
         """
-        today = timezone.now().date()
+        today = timezone.localdate()
         
         # Get or create the counter for today
         counter, created = DailyRequestCounter.objects.get_or_create(
@@ -51,7 +51,7 @@ class AIRecommendationService:
     
     def increment_request_counter(self, user):
         """Increment the user's request counter for today"""
-        today = timezone.now().date()
+        today = timezone.localdate()
         
         with transaction.atomic():
             counter, created = DailyRequestCounter.objects.get_or_create(

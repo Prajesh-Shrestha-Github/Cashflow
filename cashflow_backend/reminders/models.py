@@ -19,7 +19,7 @@ class RecurringTransactionReminder(models.Model):
         if not self.transaction.next_due_date:
             return None
         
-        today = timezone.now().date()
+        today = timezone.localdate()
         delta = self.transaction.next_due_date - today
         return delta.days
     

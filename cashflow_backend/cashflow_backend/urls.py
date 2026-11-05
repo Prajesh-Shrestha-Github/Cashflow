@@ -13,5 +13,6 @@ urlpatterns = [
     path('api/recommendations/', include('recommendations.urls')),
     path('api/articles/', include('articles.urls')),
     path('api/reminders/', include('reminders.urls')),
+    path('api/score/', include('moneyscore.urls')),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

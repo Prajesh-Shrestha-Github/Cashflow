@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'financial_goals_and_health',
     'recommendations',
     'articles',
-    'reminders'
+    'reminders',
+    'moneyscore',
 ]
 
 MIDDLEWARE = [
@@ -106,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kathmandu'  # UTC+5:45; USE_TZ stays True so stored timestamps are still UTC
 USE_I18N = True
 USE_TZ = True
 

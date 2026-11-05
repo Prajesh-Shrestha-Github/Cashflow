@@ -10,7 +10,7 @@ class Command(BaseCommand):
     help = 'Update next due dates for recurring transactions that have passed'
     
     def handle(self, *args, **options):
-        today = timezone.now().date()
+        today = timezone.localdate()
         
         # Get all recurring transactions with a next_due_date in the past
         due_transactions = Transaction.objects.filter(

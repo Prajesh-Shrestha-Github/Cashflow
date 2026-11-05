@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useTransactions } from '../../context/TransactionContext';
 import reminderService from '../../services/reminderService';
 import { format, parseISO } from 'date-fns';
+import { formatNPR } from '../../utils/formatMoney';
 
 const RecurringTransactions = () => {
   const [reminders, setReminders] = useState([]);
@@ -104,7 +105,7 @@ const RecurringTransactions = () => {
                   {reminder.transaction.description || 'Unnamed Expense'}
                 </h3>
                 <p className="text-ink-mute font-semibold mt-1">
-                  ${parseFloat(reminder.transaction.amount).toFixed(2)}
+                  {formatNPR(String(reminder.transaction.amount))}
                 </p>
                 <p className="text-sm text-ink-mute mt-1">
                   {reminder.transaction.frequency && (

@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import { GoalsProvider } from './context/GoalsContext';
 import { TransactionProvider } from './context/TransactionContext';
-import { FinancialHealthProvider } from './context/FinancialHealthContext';
 import { AIRecommendationProvider } from './context/AIRecommendationContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Layout from './components/layout/Layout';
@@ -61,13 +60,9 @@ function App() {
             element={
               <ProtectedRoute>
                 <ReminderProvider>
-                  <TransactionProvider>
-                    <FinancialHealthProvider>
-                      <Layout>
-                        <DashboardPage />
-                      </Layout>
-                    </FinancialHealthProvider>
-                  </TransactionProvider>
+                  <Layout>
+                    <DashboardPage />
+                  </Layout>
                 </ReminderProvider>
               </ProtectedRoute>
             }
@@ -103,11 +98,9 @@ function App() {
             path="/financial-health"
             element={
               <ProtectedRoute>
-                <FinancialHealthProvider>
-                  <Layout>
-                    <FinancialHealthPage />
-                  </Layout>
-                </FinancialHealthProvider>
+                <Layout>
+                  <FinancialHealthPage />
+                </Layout>
               </ProtectedRoute>
             }
           />

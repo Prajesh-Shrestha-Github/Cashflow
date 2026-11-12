@@ -165,7 +165,7 @@ class AIRecommendationService:
                 for goal in financial_summary['financial_goals']:
                     goals_section += (
                         f"- {goal['title']} ({goal['goal_type']}): "
-                        f"${goal['current_amount']:.2f} / ${goal['target_amount']:.2f} "
+                        f"NPR {goal['current_amount']:.2f} / NPR {goal['target_amount']:.2f} "
                         f"({goal['progress_percentage']:.1f}% complete, {goal['days_remaining']} days remaining)\n"
                     )
 
@@ -173,7 +173,7 @@ class AIRecommendationService:
             if financial_summary['recurring_expenses']:
                 recurring_section = "Recurring Expenses:\n"
                 for expense in financial_summary['recurring_expenses']:
-                    recurring_section += f"- {expense['description']} (${expense['amount']:.2f} - {expense['category']})\n"
+                    recurring_section += f"- {expense['description']} (NPR {expense['amount']:.2f} - {expense['category']})\n"
 
             health_section = ""
             if financial_summary['financial_health']:
@@ -187,10 +187,10 @@ class AIRecommendationService:
             Provide helpful financial advice based on the user's financial data.
             
             User's Financial Summary:
-            - Monthly Income: ${financial_summary['income']:.2f}
-            - Monthly Expenses: ${financial_summary['expenses']:.2f}
-            - Current Balance: ${financial_summary['balance']:.2f}
-            - Top spending categories: {', '.join([f'{cat}: ${amt:.2f}' for cat, amt in financial_summary['top_spending']])}
+            - Monthly Income: NPR {financial_summary['income']:.2f}
+            - Monthly Expenses: NPR {financial_summary['expenses']:.2f}
+            - Current Balance: NPR {financial_summary['balance']:.2f}
+            - Top spending categories: {', '.join([f'{cat}: NPR {amt:.2f}' for cat, amt in financial_summary['top_spending']])}
             
             {health_section}
             {goals_section}

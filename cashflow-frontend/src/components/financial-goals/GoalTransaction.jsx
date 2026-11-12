@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import goalService from '../../services/goalService';
+import { formatNPR } from '../../utils/formatMoney';
 
 const GoalTransactions = ({ goalId }) => {
   const [transactions, setTransactions] = useState([]);
@@ -96,7 +97,7 @@ const GoalTransactions = ({ goalId }) => {
                     {transaction.description || 'Contribution'}
                   </td>
                   <td className={`px-4 py-3 whitespace-nowrap text-sm font-medium text-right ${transaction.amount >= 0 ? 'text-brand' : 'text-signal'}`}>
-                    {transaction.amount >= 0 ? '+' : ''}${Math.abs(parseFloat(transaction.amount)).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                    {transaction.amount >= 0 ? '+' : '−'}{formatNPR(String(Math.abs(parseFloat(transaction.amount))))}
                   </td>
                 </tr>
               ))}

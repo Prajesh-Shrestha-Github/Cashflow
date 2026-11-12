@@ -5,6 +5,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearSca
 import { Doughnut, Line, Bar } from 'react-chartjs-2';
 import { COLORS, CATEGORY_PALETTE, applyChartDefaults, gridOptions } from '../../utils/chartTheme';
 import { toast } from 'react-hot-toast';
+import { formatNPR, formatNPRSigned } from '../../utils/formatMoney';
 
 // Register ChartJS components
 ChartJS.register(
@@ -190,12 +191,12 @@ const AdminDashboard = () => {
           <div className="bg-brand-tint p-4 rounded-lg">
             <h3 className="text-sm font-medium text-brand">Transactions</h3>
             <p className="text-2xl font-bold">{adminData.transaction_stats.total_transactions.toLocaleString()}</p>
-            <p className="text-sm text-ink-mute">Avg: ${adminData.transaction_stats.average_transaction.toFixed(2)}</p>
+            <p className="text-sm text-ink-mute">Avg: {formatNPR(String(adminData.transaction_stats.average_transaction))}</p>
           </div>
           
           <div className="bg-brand-tint p-4 rounded-lg">
             <h3 className="text-sm font-medium text-brand">Platform Balance</h3>
-            <p className="text-2xl font-bold">${adminData.transaction_stats.total_platform_balance.toLocaleString()}</p>
+            <p className="text-2xl font-bold">{formatNPRSigned(String(adminData.transaction_stats.total_platform_balance))}</p>
           </div>
         </div>
       </div>

@@ -1,17 +1,12 @@
 // src/utils/formatUtils.js
+import { formatNPRSigned } from './formatMoney';
 
 /**
- * Format a number as currency
+ * Format an amount as NPR (the only currency Cashflow uses)
  * @param {number} amount - The amount to format
- * @param {string} currency - The currency code (default: USD)
  * @returns {string} Formatted currency string
  */
-export const formatCurrency = (amount, currency = 'USD') => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency,
-    }).format(amount);
-  };
+export const formatCurrency = (amount) => formatNPRSigned(String(amount));
   
   /**
    * Format a date string to a more readable format

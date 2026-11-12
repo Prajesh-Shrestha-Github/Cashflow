@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/common/Logo';
+import { formatNPR } from '../utils/formatMoney';
 
 // Illustrative sample figures only (not real user data). Numbers are
 // consistent: category totals add up to the expense total shown.
@@ -24,8 +25,7 @@ const SAMPLE = {
 SAMPLE.expenses = SAMPLE.categories.reduce((sum, c) => sum + c.amount, 0);
 SAMPLE.net = SAMPLE.income - SAMPLE.expenses;
 
-const fmt = (n) =>
-  new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+const fmt = (n) => formatNPR(String(n)); // sample figures on the landing page are NPR too
 
 const Num = ({ children, className = '' }) => (
   <span className={`font-mono tabular-nums ${className}`}>{children}</span>

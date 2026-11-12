@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useGoals } from '../../context/GoalsContext';
 import GoalTransactions from './GoalTransaction';
+import { formatNPR } from '../../utils/formatMoney';
 
 const GoalItem = ({ goal }) => {
   const { deleteGoal, updateGoal, updateProgress } = useGoals();
@@ -131,7 +132,7 @@ const GoalItem = ({ goal }) => {
             </div>
             
             <div>
-              <label className="label">Target Amount ($)</label>
+              <label className="label">Target Amount (NPR)</label>
               <input
                 type="number"
                 className="field"
@@ -210,11 +211,11 @@ const GoalItem = ({ goal }) => {
           <div className="grid grid-cols-2 gap-4 my-4">
             <div className="bg-paper p-3 rounded-lg">
               <p className="text-sm text-ink-mute">Target Amount</p>
-              <p className="text-lg font-bold text-ink">${parseFloat(goal.target_amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+              <p className="text-lg font-bold text-ink">{formatNPR(String(goal.target_amount))}</p>
             </div>
             <div className="bg-paper p-3 rounded-lg">
               <p className="text-sm text-ink-mute">Current Amount</p>
-              <p className="text-lg font-bold text-ink">${parseFloat(goal.current_amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+              <p className="text-lg font-bold text-ink">{formatNPR(String(goal.current_amount))}</p>
             </div>
           </div>
           

@@ -139,7 +139,7 @@ const GoalForm = () => {
         </div>
         
         <div>
-          <label className="label">Target Amount ($)</label>
+          <label className="label">Target Amount (NPR)</label>
           <input
             type="number"
             placeholder="5000"

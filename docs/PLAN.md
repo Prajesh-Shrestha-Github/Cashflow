@@ -74,6 +74,8 @@ The raw SMS is shown only in the transaction's detail view.
 
 ### iOS Shortcut automation
 
+Setup steps: [ios-shortcut.md](ios-shortcut.md).
+
 - The user adds a ready-made shortcut (one tap), then creates the automation once,
   following an in-app walkthrough. Automations cannot be shared, only shortcuts.
 - The shortcut posts the message text to the ingest endpoint with a per-user token.

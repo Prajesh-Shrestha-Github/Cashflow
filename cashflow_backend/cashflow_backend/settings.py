@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'articles',
     'reminders',
     'moneyscore',
+    'statements',
 ]
 
 MIDDLEWARE = [

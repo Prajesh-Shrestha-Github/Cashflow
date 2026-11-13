@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     
     # Local apps
     'accounts',
+    'workspaces',
     'dashboard',
     'transactions',
     'financial_goals_and_health',

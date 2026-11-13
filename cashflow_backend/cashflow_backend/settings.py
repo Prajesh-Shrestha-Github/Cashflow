@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     
     # Third-party apps
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     'django_rest_passwordreset',
     
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'reminders',
     'moneyscore',
     'statements',
+    'capture',
 ]
 
 MIDDLEWARE = [

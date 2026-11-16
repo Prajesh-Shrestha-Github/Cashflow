@@ -21,19 +21,25 @@ const ForgotPasswordForm = ({ onSuccess }) => {
   };
 
   return (
-    <div className="space-y-4">
-      {message && <p className="text-green-500">{message}</p>}
-      {error && <p className="text-red-500">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-3">
+    <div>
+      {message && <p role="status" className="mt-6 rounded-xl border border-brand/25 bg-brand-tint p-3.5 text-sm font-medium text-brand-dark">{message}</p>}
+      {error && <p id="forgot-error" role="alert" className="mt-6 rounded-xl border border-signal/25 bg-signal/5 p-3.5 text-sm font-medium text-signal">{error}</p>}
+      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+        <div>
+        <label htmlFor="forgot-email" className="label">Email</label>
         <input
+          id="forgot-email"
           type="email"
-          className="w-full p-2 border rounded"
-          placeholder="Enter your email"
+          autoComplete="email"
+          aria-describedby={error ? "forgot-error" : undefined}
+          className="field"
+          placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
+        </div>
+        <button type="submit" className="btn-primary w-full py-3">
           Send Reset Token
         </button>
       </form>

@@ -1,12 +1,16 @@
 // src/pages/TransactionsPage.jsx
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import TransactionSummary from '../components/transactions/TransactionSummary';
 import TransactionList from '../components/transactions/TransactionList';
 import TransactionForm from '../components/transactions/TransactionForm';
 import CsvImport from '../components/transactions/CsvImport';
+import PageHeader from '../components/common/PageHeader';
 
 const TransactionsPage = () => {
-  const [showAddForm, setShowAddForm] = useState(false);
+  const location = useLocation();
+  // The dashboard's "Add transaction" button links here with state.openForm
+  const [showAddForm, setShowAddForm] = useState(Boolean(location.state?.openForm));
   const [activeTab, setActiveTab] = useState('transactions');
 
   const handleAddSuccess = () => {
@@ -15,35 +19,33 @@ const TransactionsPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header Section */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">Transactions</h1>
-      </div>
-      
-      <div className="bg-white rounded-lg shadow">
-        <div className="mb-4">
-          <TransactionSummary />
-        </div>
+      <PageHeader title="Transactions" />
+
+      <TransactionSummary />
+
+      <div className="card">
 
         {/* Tabs and Actions */}
-        <div className="flex items-center justify-between border-b border-gray-200 px-6">
-          <nav className="flex">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-6">
+          <nav className="flex rounded-xl bg-paper p-1" aria-label="Transactions views">
             <button
               onClick={() => setActiveTab('transactions')}
-              className={`py-4 px-6 font-medium ${
+              aria-pressed={activeTab === 'transactions'}
+              className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                 activeTab === 'transactions'
-                  ? 'border-b-2 border-blue-600 text-blue-600'
-                  : 'text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-200'
+                  ? 'bg-forest text-paper'
+                  : 'text-ink-mute hover:text-ink'
               }`}
             >
               Transactions
             </button>
             <button
               onClick={() => setActiveTab('import')}
-              className={`py-4 px-6 font-medium ${
+              aria-pressed={activeTab === 'import'}
+              className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                 activeTab === 'import'
-                  ? 'border-b-2 border-blue-600 text-blue-600'
-                  : 'text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-200'
+                  ? 'bg-forest text-paper'
+                  : 'text-ink-mute hover:text-ink'
               }`}
             >
               Import CSV
@@ -51,14 +53,10 @@ const TransactionsPage = () => {
           </nav>
 
           {/* Action Buttons */}
-          <div className="py-4">
+          <div>
             <button
               onClick={() => setShowAddForm(!showAddForm)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                showAddForm
-                  ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
-              }`}
+              className={showAddForm ? 'btn-ghost' : 'btn-accent'}
             >
               {showAddForm ? 'Cancel' : 'Add Transaction'}
             </button>
@@ -66,9 +64,9 @@ const TransactionsPage = () => {
         </div>
 
         {/* Content Area */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {showAddForm && (
-            <div className="mb-6 border-b border-gray-200 pb-6">
+            <div className="mb-6 border-b border-line pb-6">
               <TransactionForm 
                 onSuccess={handleAddSuccess} 
                 onCancel={() => setShowAddForm(false)} 

@@ -16,7 +16,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-developmen
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', *filter(None, os.getenv('ALLOWED_HOSTS', '').split(','))]
 
 # Application definition
 INSTALLED_APPS = [
@@ -29,17 +29,22 @@ INSTALLED_APPS = [
     
     # Third-party apps
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     'django_rest_passwordreset',
     
     # Local apps
     'accounts',
+    'workspaces',
     'dashboard',
     'transactions',
     'financial_goals_and_health',
     'recommendations',
     'articles',
-    'reminders'
+    'reminders',
+    'moneyscore',
+    'statements',
+    'capture',
 ]
 
 MIDDLEWARE = [
@@ -106,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kathmandu'  # UTC+5:45; USE_TZ stays True so stored timestamps are still UTC
 USE_I18N = True
 USE_TZ = True
 

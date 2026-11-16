@@ -45,11 +45,11 @@ const RecommendationHistory = () => {
 
   if (error) {
     return (
-      <div className="p-4 text-red-600">
+      <div className="p-4 text-signal">
         <p>Error: {error}</p>
         <button
           onClick={fetchRecommendationHistory}
-          className="mt-2 text-indigo-600 hover:text-indigo-800"
+          className="mt-2 text-brand hover:text-brand-dark"
         >
           Try Again
         </button>
@@ -59,7 +59,7 @@ const RecommendationHistory = () => {
 
   if (!Array.isArray(recommendations)) {
     return (
-      <div className="p-4 text-red-600">
+      <div className="p-4 text-signal">
         <p>Error: Invalid recommendation data</p>
       </div>
     );
@@ -71,7 +71,7 @@ const RecommendationHistory = () => {
         <h2 className="text-xl font-semibold">Recommendation History</h2>
         {totalItems > 0 && (
           <div className="flex items-center space-x-2">
-            <label htmlFor="itemsPerPage" className="text-sm text-gray-700">
+            <label htmlFor="itemsPerPage" className="text-sm text-ink-soft">
               Items per page:
             </label>
             <select
@@ -89,7 +89,7 @@ const RecommendationHistory = () => {
       </div>
 
       {recommendations.length === 0 ? (
-        <div className="text-center text-gray-500">
+        <div className="text-center text-ink-mute">
           <p className="text-lg">No recommendation history yet</p>
           <p>Your AI conversations will appear here</p>
         </div>
@@ -100,20 +100,20 @@ const RecommendationHistory = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <p className="font-medium">{item.query}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-ink-mute">
                     {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })} •{' '}
                     {getSarcasmLevelLabel(item.sarcasm_level)}
                   </p>
                 </div>
                 <button
                   onClick={() => handleToggleExpand(item.id)}
-                  className="text-indigo-600 hover:text-indigo-800 text-sm font-medium"
+                  className="text-brand hover:text-brand-dark text-sm font-medium"
                 >
                   {expandedId === item.id ? 'Hide' : 'View'}
                 </button>
               </div>
               {expandedId === item.id && (
-                <div className="mt-2 text-gray-700">
+                <div className="mt-2 text-ink-soft">
                   {item.response ? (
                     <ReactMarkdown>{item.response}</ReactMarkdown>
                   ) : (
@@ -132,13 +132,13 @@ const RecommendationHistory = () => {
                 disabled={currentPage === 1}
                 className={`px-4 py-2 rounded ${
                   currentPage === 1
-                    ? 'bg-gray-300 cursor-not-allowed'
-                    : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                    ? 'bg-line cursor-not-allowed'
+                    : 'bg-forest text-white hover:bg-forest-deep'
                 }`}
               >
                 Previous
               </button>
-              <span className="text-sm text-gray-700">
+              <span className="text-sm text-ink-soft">
                 Page {currentPage} of {totalPages} ({startIndex + 1} - {Math.min(endIndex, totalItems)} of {totalItems})
               </span>
               <button
@@ -146,8 +146,8 @@ const RecommendationHistory = () => {
                 disabled={currentPage === totalPages}
                 className={`px-4 py-2 rounded ${
                   currentPage === totalPages
-                    ? 'bg-gray-300 cursor-not-allowed'
-                    : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                    ? 'bg-line cursor-not-allowed'
+                    : 'bg-forest text-white hover:bg-forest-deep'
                 }`}
               >
                 Next

@@ -50,12 +50,12 @@ const CsvImport = () => {
   };
   
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-card p-6 rounded-xl shadow-card">
       <h2 className="text-2xl font-bold mb-4">Import Transactions</h2>
       
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="csv-file" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="csv-file" className="label">
             Upload CSV File
           </label>
           <input
@@ -63,28 +63,28 @@ const CsvImport = () => {
             id="csv-file"
             accept=".csv"
             onChange={handleFileChange}
-            className="block w-full text-sm text-gray-500
+            className="block w-full text-sm text-ink-mute
                        file:mr-4 file:py-2 file:px-4
-                       file:rounded-md file:border-0
+                       file:rounded-lg file:border-0
                        file:text-sm file:font-medium
-                       file:bg-blue-50 file:text-blue-700
-                       hover:file:bg-blue-100"
+                       file:bg-brand-tint file:text-brand-dark
+                       hover:file:bg-brand-tint"
           />
-          {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
-          <p className="mt-1 text-sm text-gray-500">
+          {error && <p className="mt-1 text-sm text-signal">{error}</p>}
+          <p className="mt-1 text-sm text-ink-mute">
             CSV file should have columns: date, amount, category_name, description
           </p>
         </div>
         
         {importErrors.length > 0 && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-            <h3 className="text-sm font-medium text-red-800 mb-1">Import Errors:</h3>
-            <ul className="list-disc list-inside text-xs text-red-700 space-y-1">
+          <div className="mb-4 p-3 bg-signal/10 border border-signal/30 rounded-lg">
+            <h3 className="text-sm font-medium text-signal mb-1">Import Errors:</h3>
+            <ul className="list-disc list-inside text-sm text-signal space-y-1">
               {importErrors.map((err, index) => (
                 <li key={index}>{err}</li>
               ))}
             </ul>
-            <p className="mt-2 text-xs text-red-700">
+            <p className="mt-2 text-sm text-signal">
               Please check your CSV format and try again. Make sure column names and data formats are correct.
             </p>
           </div>
@@ -94,7 +94,7 @@ const CsvImport = () => {
           <button
             type="submit"
             disabled={!file || isUploading || loading}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            className="btn-primary"
           >
             {isUploading ? 'Importing...' : 'Import CSV'}
           </button>
@@ -103,10 +103,10 @@ const CsvImport = () => {
       
       <div className="mt-6">
         <h3 className="text-lg font-medium mb-2">CSV Format Instructions</h3>
-        <p className="text-sm text-gray-600 mb-2">
+        <p className="text-sm text-ink-mute mb-2">
           Your CSV file should have the following columns:
         </p>
-        <ul className="list-disc list-inside text-sm text-gray-600">
+        <ul className="list-disc list-inside text-sm text-ink-mute">
           <li><strong>date</strong> - in YYYY-MM-DD format (e.g., 2025-04-01)</li>
           <li><strong>amount</strong> - decimal number (positive for income, negative for expenses)</li>
           <li><strong>category_name</strong> - must match an existing category name</li>

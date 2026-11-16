@@ -2,6 +2,7 @@ import csv
 import io
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
+from workspaces.models import personal_workspace
 from .models import Category, Transaction
 
 def get_or_create_category(name, transaction_type):
@@ -142,6 +143,9 @@ def process_csv_file(csv_file, user):
     # Bulk create transactions
     if transactions:
         try:
+            workspace = personal_workspace(user)
+            for transaction in transactions:
+                transaction.workspace = workspace
             Transaction.objects.bulk_create(transactions)
         except Exception as e:
             errors.append(f"Database error while saving transactions: {str(e)}")

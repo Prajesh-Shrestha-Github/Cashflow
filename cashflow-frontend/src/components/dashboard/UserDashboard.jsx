@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title } from 'chart.js';
-import { Pie, Line, Bar } from 'react-chartjs-2';
+import { Doughnut, Line, Bar } from 'react-chartjs-2';
+import { COLORS, CATEGORY_PALETTE, applyChartDefaults, gridOptions } from '../../utils/chartTheme';
+import { formatNPR } from '../../utils/formatMoney';
 
 // Register ChartJS components
 ChartJS.register(
@@ -16,12 +17,12 @@ ChartJS.register(
   BarElement,
   Title
 );
+applyChartDefaults(ChartJS);
 
 const UserDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { user } = useAuth();
   const [timeRange, setTimeRange] = useState('month'); // 'week', 'month', 'year'
 
   useEffect(() => {
@@ -43,14 +44,14 @@ const UserDashboard = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-red-100 text-red-700 rounded-md">
+      <div role="alert" className="rounded-xl bg-signal/10 p-4 text-signal">
         {error}
       </div>
     );
@@ -104,273 +105,233 @@ const UserDashboard = () => {
     savings_rate: dashboardData.stats.savings_rate || 0
   };
 
-  // Prepare data for expense category pie chart
+  // Chart data (colours come from the shared chart theme)
   const expenseCategoryData = {
     labels: categoryBreakdown.map(item => item.category),
     datasets: [
       {
         label: 'Expense by Category',
         data: categoryBreakdown.map(item => item.amount),
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.6)',
-          'rgba(54, 162, 235, 0.6)',
-          'rgba(255, 206, 86, 0.6)',
-          'rgba(75, 192, 192, 0.6)',
-          'rgba(153, 102, 255, 0.6)',
-          'rgba(255, 159, 64, 0.6)',
-          'rgba(199, 199, 199, 0.6)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-          'rgba(199, 199, 199, 1)',
-        ],
-        borderWidth: 1,
+        backgroundColor: CATEGORY_PALETTE,
+        borderColor: COLORS.paper,
+        borderWidth: 3,
+        hoverOffset: 6,
       },
     ],
   };
 
-  // Prepare data for income vs expense trend line chart
   const trendChartData = {
     labels: trendData.map(item => item.date),
     datasets: [
       {
         label: 'Income',
         data: trendData.map(item => item.income),
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        tension: 0.4,
+        borderColor: COLORS.brand,
+        backgroundColor: COLORS.brandSoft,
+        tension: 0.35,
         fill: true,
+        pointRadius: 3,
+        pointBackgroundColor: COLORS.brand,
+        borderWidth: 2.5,
       },
       {
         label: 'Expenses',
         data: trendData.map(item => item.expense),
-        borderColor: 'rgba(255, 99, 132, 1)',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        tension: 0.4,
+        borderColor: COLORS.signal,
+        backgroundColor: COLORS.signalSoft,
+        tension: 0.35,
         fill: true,
+        pointRadius: 3,
+        pointBackgroundColor: COLORS.signal,
+        borderWidth: 2.5,
       },
     ],
   };
 
-  // Prepare data for spending habits bar chart
+  const patternValues = spendingPatterns.map(item => item.average_amount);
+  const peak = Math.max(...patternValues);
   const spendingPatternData = {
     labels: spendingPatterns.map(item => item.day_of_week || item.time_of_day),
     datasets: [
       {
         label: 'Average Spending',
-        data: spendingPatterns.map(item => item.average_amount),
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
+        data: patternValues,
+        // the single highest bar is highlighted with the accent
+        backgroundColor: patternValues.map(v => (v === peak && peak > 0 ? COLORS.accent : COLORS.forest)),
+        borderRadius: 8,
+        borderSkipped: false,
+        maxBarThickness: 36,
       },
     ],
   };
 
+  const ranges = [['week', 'Week'], ['month', 'Month'], ['year', 'Year']];
+  const changeTone = (n, goodWhenUp) => ((n > 0) === goodWhenUp ? 'text-brand' : 'text-signal');
+  const npr = (n) => formatNPR(String(n)); // the API sends numbers today (bug #13); format them as NPR
+
   return (
-    <div className="space-y-6">
-      {/* Summary Cards */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Welcome, {user.first_name || user.username}!</h2>
-          <div className="flex space-x-2">
-            <button 
-              onClick={() => setTimeRange('week')} 
-              className={`px-3 py-1 text-sm rounded-md ${timeRange === 'week' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'}`}
-            >
-              Week
-            </button>
-            <button 
-              onClick={() => setTimeRange('month')} 
-              className={`px-3 py-1 text-sm rounded-md ${timeRange === 'month' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'}`}
-            >
-              Month
-            </button>
-            <button 
-              onClick={() => setTimeRange('year')} 
-              className={`px-3 py-1 text-sm rounded-md ${timeRange === 'year' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'}`}
-            >
-              Year
-            </button>
+    <div className="space-y-4 sm:space-y-5">
+      {/* Money in and out for the chosen period (the main balance is the hero above, not a period figure) */}
+      <section aria-label="Money in and out" className="card-pad">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Money in and out</h2>
+          <div role="group" aria-label="Time range" className="flex rounded-xl bg-paper p-1">
+            {ranges.map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setTimeRange(key)}
+                aria-pressed={timeRange === key}
+                className={`rounded-lg px-4 py-1.5 text-base font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
+                  timeRange === key ? 'bg-forest text-paper' : 'text-ink-mute hover:text-ink'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-blue-50 p-4 rounded-md">
-            <h3 className="text-sm font-medium text-blue-500">Total Income</h3>
-            <p className="text-2xl font-bold">${stats.total_income.toLocaleString()}</p>
+
+        <dl className="mt-5 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl bg-brand-tint p-4">
+            <dt className="text-base text-brand-dark">Money in</dt>
+            <dd className="mt-1 font-display text-3xl font-bold tracking-tight text-brand-dark">{npr(stats.total_income)}</dd>
             {stats.income_change !== 0 && (
-              <p className={`text-sm ${stats.income_change > 0 ? 'text-green-500' : 'text-red-500'}`}>
+              <p className={`mt-1 text-base ${changeTone(stats.income_change, true)}`}>
                 {stats.income_change > 0 ? '↑' : '↓'} {Math.abs(stats.income_change)}% from previous {timeRange}
               </p>
             )}
           </div>
-          
-          <div className="bg-red-50 p-4 rounded-md">
-            <h3 className="text-sm font-medium text-red-500">Total Expenses</h3>
-            <p className="text-2xl font-bold">${stats.total_expense.toLocaleString()}</p>
+          <div className="rounded-2xl bg-signal/10 p-4">
+            <dt className="text-base text-signal">Money out</dt>
+            <dd className="mt-1 font-display text-3xl font-bold tracking-tight text-signal">{npr(stats.total_expense)}</dd>
             {stats.expense_change !== 0 && (
-              <p className={`text-sm ${stats.expense_change < 0 ? 'text-green-500' : 'text-red-500'}`}>
+              <p className={`mt-1 text-base ${changeTone(stats.expense_change, false)}`}>
                 {stats.expense_change > 0 ? '↑' : '↓'} {Math.abs(stats.expense_change)}% from previous {timeRange}
               </p>
             )}
           </div>
-          
-          <div className="bg-green-50 p-4 rounded-md">
-            <h3 className="text-sm font-medium text-green-500">Balance</h3>
-            <p className="text-2xl font-bold">${stats.balance.toLocaleString()}</p>
-            {stats.savings_rate > 0 && (
-              <p className="text-sm text-gray-600">
-                Savings Rate: {stats.savings_rate}%
-              </p>
-            )}
+          <div className="rounded-2xl bg-paper p-4">
+            <dt className="text-base text-ink-soft">Saved</dt>
+            <dd className="mt-1 font-display text-3xl font-bold tracking-tight">{stats.savings_rate}%</dd>
+            <p className="mt-1 text-base text-ink-mute">of your income</p>
           </div>
-        </div>
-      </div>
-      
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Expense Categories Pie Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Expense Breakdown</h2>
-          <div className="h-64">
-            <Pie data={expenseCategoryData} options={{ maintainAspectRatio: false }} />
-          </div>
-        </div>
-        
-        {/* Income vs Expense Trend */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Income vs Expense Trend</h2>
-          <div className="h-64">
-            <Line 
-              data={trendChartData} 
-              options={{ 
+        </dl>
+      </section>
+
+      {/* Charts */}
+      <div className="grid gap-4 sm:gap-5 lg:grid-cols-2">
+        <section className="card-pad lg:col-span-2">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Income vs Expense Trend</h2>
+          <div className="mt-4 h-72">
+            <Line
+              data={trendChartData}
+              options={{
                 maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
                 scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: {
-                      callback: value => `$${value}`
-                    }
-                  }
+                  x: { ...gridOptions, grid: { display: false } },
+                  y: { ...gridOptions, beginAtZero: true, ticks: { callback: value => `NPR ${Number(value).toLocaleString('en-IN')}` } },
                 },
                 plugins: {
-                  legend: {
-                    position: 'top',
-                  },
+                  legend: { position: 'top', align: 'end' },
                   tooltip: {
                     callbacks: {
                       label: function(context) {
-                        return `${context.dataset.label}: $${context.raw.toLocaleString()}`;
+                        return `${context.dataset.label}: ${npr(context.raw)}`;
                       }
                     }
                   }
                 }
-              }} 
+              }}
             />
           </div>
-        </div>
-        
-        {/* Spending Patterns Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Spending Patterns</h2>
-          <div className="h-64">
-            <Bar 
-              data={spendingPatternData} 
-              options={{ 
+        </section>
+
+        <section className="card-pad">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Expense Breakdown</h2>
+          <div className="mt-4 h-72">
+            <Doughnut
+              data={expenseCategoryData}
+              options={{ maintainAspectRatio: false, cutout: '66%', plugins: { legend: { position: 'right' } } }}
+            />
+          </div>
+        </section>
+
+        <section className="card-pad">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Spending Patterns</h2>
+          <div className="mt-4 h-72">
+            <Bar
+              data={spendingPatternData}
+              options={{
                 maintainAspectRatio: false,
                 scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: {
-                      callback: value => `$${value}`
-                    }
-                  }
+                  x: { ...gridOptions, grid: { display: false } },
+                  y: { ...gridOptions, beginAtZero: true, ticks: { callback: value => `NPR ${Number(value).toLocaleString('en-IN')}` } },
                 },
                 plugins: {
-                  legend: {
-                    display: false
-                  },
+                  legend: { display: false },
                   tooltip: {
                     callbacks: {
                       label: function(context) {
-                        return `Average Spending: $${context.raw.toLocaleString()}`;
+                        return `Average Spending: ${npr(context.raw)}`;
                       }
                     }
                   }
                 }
-              }} 
+              }}
             />
           </div>
-        </div>
-        
-        {/* Transaction Insights */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Transaction Insights</h2>
-          <div className="space-y-4">
+        </section>
+
+        <section className="card-pad lg:col-span-2">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Transaction Insights</h2>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
             {insights && insights.map((insight, index) => (
-              <div key={index} className="border-l-4 border-indigo-500 pl-4 py-2">
-                <h3 className="font-medium text-gray-800">{insight.title}</h3>
-                <p className="text-gray-600">{insight.description}</p>
+              <div key={index} className="rounded-xl bg-paper p-4">
+                <h3 className="font-display text-lg font-bold tracking-tight text-ink">{insight.title}</h3>
+                <p className="mt-1 text-ink-mute">{insight.description}</p>
               </div>
             ))}
             {!insights || insights.length === 0 ? (
-              <p className="text-gray-500 italic">Not enough transaction data to generate insights.</p>
+              <p className="italic text-ink-mute">Not enough transaction data to generate insights.</p>
             ) : null}
           </div>
-        </div>
+        </section>
       </div>
-      
+
       {/* Recent Transactions */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Recent Transactions</h2>
-        
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Category
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Amount
-                </th>
+      <section className="card-pad">
+        <h2 className="font-display text-2xl font-bold tracking-tight">Recent Transactions</h2>
+
+        <div className="mt-4 overflow-x-auto">
+          <table className="min-w-full">
+            <thead>
+              <tr className="border-b border-ink/15 text-left text-sm font-semibold text-ink-mute">
+                <th className="py-3 pr-6">Date</th>
+                <th className="py-3 pr-6">Category</th>
+                <th className="py-3 pr-6">Type</th>
+                <th className="py-3 text-right">Amount</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-line">
               {dashboardData.recent_transactions && dashboardData.recent_transactions.map((transaction) => (
                 <tr key={transaction.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {transaction.date}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {transaction.category}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      transaction.type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
+                  <td className="whitespace-nowrap py-3.5 pr-6 font-mono text-sm text-ink-mute">{transaction.date}</td>
+                  <td className="whitespace-nowrap py-3.5 pr-6 text-sm text-ink-soft">{transaction.category}</td>
+                  <td className="whitespace-nowrap py-3.5 pr-6">
+                    <span className={`chip ${transaction.type === 'income' ? 'bg-brand-tint text-brand-dark' : 'bg-signal/10 text-signal'}`}>
                       {transaction.type}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${transaction.amount.toLocaleString()}
+                  <td className={`whitespace-nowrap py-3.5 text-right font-mono text-sm font-semibold tabular-nums ${transaction.type === 'income' ? 'text-brand' : 'text-signal'}`}>
+                    {npr(transaction.amount)}
                   </td>
                 </tr>
               ))}
               {(!dashboardData.recent_transactions || dashboardData.recent_transactions.length === 0) && (
                 <tr>
-                  <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">
+                  <td colSpan="4" className="py-6 text-center text-sm text-ink-mute">
                     No recent transactions found
                   </td>
                 </tr>
@@ -378,7 +339,7 @@ const UserDashboard = () => {
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
     </div>
   );
 };

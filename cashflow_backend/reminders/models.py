@@ -19,7 +19,7 @@ class RecurringTransactionReminder(models.Model):
         if not self.transaction.next_due_date:
             return None
         
-        today = timezone.now().date()
+        today = timezone.localdate()
         delta = self.transaction.next_due_date - today
         return delta.days
     
@@ -40,7 +40,7 @@ class RecurringTransactionReminder(models.Model):
             This is a reminder that you have an upcoming recurring expense:
             
             Description: {self.transaction.description}
-            Amount: ${self.transaction.amount}
+            Amount: NPR {self.transaction.amount}
             Due date: {self.transaction.next_due_date}
             {"Due today!" if days == 0 else f"Days remaining: {days}"}
             

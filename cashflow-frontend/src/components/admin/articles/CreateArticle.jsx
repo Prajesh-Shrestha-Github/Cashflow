@@ -27,11 +27,11 @@ const CreateArticle = () => {
   return (
     <div className="max-w-4xl mx-auto py-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-800">Create New Article</h1>
-        <p className="text-gray-600">Enter the details for the new article</p>
+        <h1 className="font-display text-4xl font-extrabold tracking-[-0.035em] text-ink sm:text-5xl">Create New Article</h1>
+        <p className="text-ink-mute">Enter the details for the new article</p>
       </div>
       
-      <div className="bg-white shadow-md rounded-lg p-6">
+      <div className="bg-card shadow-card rounded-xl p-6">
         <ArticleForm 
           onSubmit={handleSubmit}
           loading={loading}

@@ -2,6 +2,7 @@
 from django.db import models
 from django.utils import timezone
 from accounts.models import User
+from workspaces.models import personal_workspace
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from dateutil.relativedelta import relativedelta
@@ -47,13 +48,20 @@ class Transaction(models.Model):
     # Add this new field to link transactions to financial goals
     financial_goal = models.ForeignKey('financial_goals_and_health.FinancialGoal', on_delete=models.SET_NULL, 
                                       null=True, blank=True, related_name='transactions')
+    workspace = models.ForeignKey('workspaces.Workspace', on_delete=models.CASCADE, related_name='transactions')
+    account = models.ForeignKey('workspaces.Account', on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions')
+    reference = models.CharField(max_length=64, blank=True, default='')   # the bank's own id for this payment, when known
+    time = models.TimeField(null=True, blank=True)                        # Nepal time of day, when the source gives one
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.amount} - {self.date}"
-    
+
     def save(self, *args, **kwargs):
+        if self.workspace_id is None:
+            self.workspace = personal_workspace(self.user)      # bulk_create skips save(): set it there by hand
+
         # If this is a recurring transaction and it's an expense
         if self.is_recurring and self.category and self.category.type == 'expense':
             # If next_due_date is not set, initialize it to the transaction date

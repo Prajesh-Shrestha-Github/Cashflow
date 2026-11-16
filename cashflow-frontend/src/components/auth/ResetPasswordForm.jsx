@@ -34,23 +34,32 @@ const ResetPasswordForm = () => {
   };
 
   return (
-    <div className="space-y-4">
-      {message && <p className="text-green-500">{message}</p>}
-      {error && <p className="text-red-500">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-3">
+    <div>
+      {message && <p role="status" className="mt-6 rounded-xl border border-brand/25 bg-brand-tint p-3.5 text-sm font-medium text-brand-dark">{message}</p>}
+      {error && <p id="reset-error" role="alert" className="mt-6 rounded-xl border border-signal/25 bg-signal/5 p-3.5 text-sm font-medium text-signal">{error}</p>}
+      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+        <div>
+        <label htmlFor="reset-token" className="label">Reset token</label>
         <input
+          id="reset-token"
           type="text"
-          className="w-full p-2 border rounded"
-          placeholder="Enter reset token"
+          autoComplete="one-time-code"
+          className="field"
+          placeholder="Paste the token from your email"
           value={token}
           onChange={(e) => setToken(e.target.value)}
           required
         />
+        </div>
+        <div>
+        <label htmlFor="reset-password" className="label">New password</label>
         <div className="relative">
           <input
+            id="reset-password"
             type={showPassword ? 'text' : 'password'}
-            className="w-full p-2 border rounded"
-            placeholder="New Password"
+            autoComplete="new-password"
+            className="field pr-11"
+            placeholder="Choose a new password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
@@ -58,19 +67,22 @@ const ResetPasswordForm = () => {
           <button
             type="button"
             onClick={() => setShowPassword(prev => !prev)}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-pressed={showPassword}
+            className="absolute inset-y-0 right-0 flex items-center rounded-r-xl px-3.5 text-ink-mute hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
           >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
+            {showPassword ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
           </button>
         </div>
-        <div className="flex space-x-3">
-          <button type="submit" className="flex-1 bg-blue-500 text-white p-2 rounded">
+        </div>
+        <div className="flex gap-3">
+          <button type="submit" className="btn-primary flex-1 py-3">
             Reset Password
           </button>
           <button 
             type="button" 
             onClick={handleCancel} 
-            className="flex-1 bg-gray-300 text-gray-800 p-2 rounded hover:bg-gray-400"
+            className="btn-ghost flex-1 py-3"
           >
             Cancel
           </button>

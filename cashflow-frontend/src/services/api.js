@@ -31,8 +31,13 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     
+    // A 401 from the login/register calls means "wrong credentials", not "expired token":
+    // do not try to refresh or redirect, or the page reloads and the error message is lost.
+    const isAuthCall = /\/accounts\/(login|register)\//.test(originalRequest?.url || '');
+
     // If the error is due to token expiration, try refreshing the token
-    if (error.response.status === 401 && !originalRequest._retry) {
+    // (error.response is undefined on network errors, so guard it)
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthCall) {
       originalRequest._retry = true;
       
       try {

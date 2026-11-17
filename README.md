@@ -6,6 +6,16 @@ financial health, and gives you AI-backed advice in NPR.
 
 > Status: active development. See [docs/PLAN.md](docs/PLAN.md) for the roadmap.
 
+## Demo
+
+[![Cashflow demo: a bank SMS becomes a transaction, then a Money Score. Click to play the 22-second video.](docs/demo.jpg)](docs/demo.mp4)
+
+A 22-second walkthrough: a bank SMS becomes a transaction without typing, duplicates from a
+statement are skipped, and spending rolls up into a Money Score with AI advice in NPR. All
+accounts, merchants and amounts shown are placeholders.
+
+<sub>Music: "Happy Beats: Business Moves Vol. 1" by Sascha Ende ([ende.app](https://ende.app)), CC BY 4.0.</sub>
+
 ## Features
 
 - **Zero-entry capture**: an ingest endpoint with an SMS parser, plus bank statement import
